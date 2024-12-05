@@ -34,9 +34,14 @@ export async function handleEthBlock(block: EthereumBlock): Promise<void> {
       availPrice: avail.toNumber(),
       ethPrice: eth.toNumber(),
       blockNumber: block.number,
-      // date: new Date(block.timestamp.toString()),
+      date: new Date(Number(block.timestamp) * 1000),
     });
   }
+  priceFeed.availPrice = avail.toNumber();
+  priceFeed.ethPrice = eth.toNumber();
+  priceFeed.blockNumber = block.number;
+  priceFeed.blockNumber = block.number;
+  priceFeed.date = new Date(Number(block.timestamp) * 1000);
   logger.info(`New ETH Price Feed::::::  ${priceFeed.ethPrice.toString()}`);
   logger.info(`New AVAIL Price Feed::::::  ${priceFeed.availPrice.toString()}`);
 

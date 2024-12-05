@@ -22,9 +22,9 @@ network:
   chainId: '1'
   endpoint:
     - https://eth.llamarpc.com
-    - https://eth-mainnet.public.blastapi.io
     - https://rpc.mevblocker.io	
     - https://1rpc.io/eth
+    - https://ethereum.rpc.subquery.network/public
 
 
 dataSources:
