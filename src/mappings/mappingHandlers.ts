@@ -42,26 +42,26 @@ async function checkGetUserAddress(
 
 export async function handleEVMLog(transferLog: TransferLog): Promise<void> {
   logger.info("transaction: " + transferLog.transactionHash);
-  let from = transferLog.transaction.from.toString();
-  let to = transferLog.transaction.to.toString();
-  let contractAddress = transferLog.address;
-  assert(transferLog.args, "Expected args to exist");
-  const transaction = EVMTransfers.create({
-    id: transferLog.transactionHash,
-    value: transferLog.args.value.toBigInt(),
-    fromId: (
-      await checkGetUserAddress(ethToKavaAddress(from), from)
-    ).id.toString(),
-    toId: (await checkGetUserAddress(ethToKavaAddress(to), to)).id.toString(),
-    contractAddressId: (
-      await checkGetUserAddress(
-        ethToKavaAddress(contractAddress),
-        contractAddress
-      )
-    ).id.toString(),
-  });
+  // let from = transferLog.transaction.from.toString();
+  // let to = transferLog.transaction.to.toString();
+  // let contractAddress = transferLog.address;
+  // assert(transferLog.args, "Expected args to exist");
+  // const transaction = EVMTransfers.create({
+  //   id: transferLog.transactionHash,
+  //   value: transferLog.args.value.toBigInt(),
+  //   fromId: (
+  //     await checkGetUserAddress(ethToKavaAddress(from), from)
+  //   ).id.toString(),
+  //   toId: (await checkGetUserAddress(ethToKavaAddress(to), to)).id.toString(),
+  //   contractAddressId: (
+  //     await checkGetUserAddress(
+  //       ethToKavaAddress(contractAddress),
+  //       contractAddress
+  //     )
+  //   ).id.toString(),
+  // });
 
-  await transaction.save();
+  // await transaction.save();
 }
 
 export async function handleCosmosEvent(event: CosmosEvent): Promise<void> {
