@@ -19,9 +19,6 @@ services:
 
   subquery-node-cosmos:
     image: subquerynetwork/subql-node-cosmos:latest
-    depends_on:
-      "postgres":
-        condition: service_healthy
     restart: unless-stopped
     environment:
       DB_USER: postgres
@@ -45,9 +42,6 @@ services:
 
   subquery-node-evm:
     image: subquerynetwork/subql-node-ethereum:latest
-    depends_on:
-      "postgres":
-        condition: service_healthy
     restart: unless-stopped
     environment:
       DB_USER: postgres
