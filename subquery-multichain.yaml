@@ -3,5 +3,5 @@ query:
   name: '@subql/query'
   version: '*'
 projects:
-  - kava-cosmos.yaml
-  - kava-evm.yaml
+  - avail.yaml
+  - ethereum.yaml

@@ -3,7 +3,7 @@ import {
   SubstrateEvent,
   SubstrateBlock,
 } from "@subql/types";
-import { Account, Transfer } from "../types";
+import { Account, Transfer } from "../types/models";
 
 import { Balance } from "@polkadot/types/interfaces";
 import { decodeAddress } from "@polkadot/util-crypto";
