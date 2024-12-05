@@ -37,7 +37,8 @@ export async function handleEthBlock(block: EthereumBlock): Promise<void> {
       date: new Date(block.timestamp.toString()),
     });
   }
-  await Promise.all([priceFeed.save()]);
+  logger.info(`New Price Feed::::::  ${priceFeed.ethPrice.toString()}`);
 
   logger.info(`New ETHEREUM Price::::::  ${eth.toString()}`);
+  await Promise.all([priceFeed.save()]);
 }
