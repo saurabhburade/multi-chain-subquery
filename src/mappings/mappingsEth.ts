@@ -34,11 +34,12 @@ export async function handleEthBlock(block: EthereumBlock): Promise<void> {
       availPrice: avail.toNumber(),
       ethPrice: eth.toNumber(),
       blockNumber: block.number,
-      date: new Date(block.timestamp.toString()),
+      // date: new Date(block.timestamp.toString()),
     });
   }
-  logger.info(`New Price Feed::::::  ${priceFeed.ethPrice.toString()}`);
+  logger.info(`New ETH Price Feed::::::  ${priceFeed.ethPrice.toString()}`);
+  logger.info(`New AVAIL Price Feed::::::  ${priceFeed.availPrice.toString()}`);
 
   logger.info(`New ETHEREUM Price::::::  ${eth.toString()}`);
-  await Promise.all([priceFeed.save()]);
+  return await priceFeed.save();
 }
