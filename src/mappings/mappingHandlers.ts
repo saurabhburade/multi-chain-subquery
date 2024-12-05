@@ -76,7 +76,9 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
       logger.info(
         `New DATA AVAIL ::::::  ${dataSubmissionSize.toString()} APP:: ${extrinsic
           .inspect()
-          .outer!.toString()} SIGNER :: ${extrinsic.signer.toString()} HASH:: ${extrinsic.hash.toString()}`
+          .outer!.toString()} SIGNER :: ${extrinsic.signer.toString()} HASH:: ${extrinsic.hash.toString()} ARGS:: ${
+          methodData.args
+        }`
       );
       logger.info(`New DATA AVAIL ::::::  ${dataSubmissionSize.toString()}`);
       // idx,
