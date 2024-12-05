@@ -2,6 +2,17 @@
 # Add the `@index` or `@index(unique: true)` annotation after any non-key field
 # https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
 
+type PriceFeed @entity {
+  id: ID!
+
+  blockNumber: Int!
+
+  date: Date
+
+  ethPrice: Float!
+  availPrice: Float!
+}
+
 type Transfer @entity {
   """
   id field is always required and must look like this
