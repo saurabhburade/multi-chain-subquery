@@ -24,9 +24,9 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 // }
 
 export async function handleEvent(event: SubstrateEvent): Promise<void> {
-  logger.info(
-    `New transfer event found at block ${event.block.block.header.number.toString()}`
-  );
+  // logger.info(
+  //   `New transfer event found at block ${event.block.block.header.number.toString()}`
+  // );
 
   // Get data from the event
   // The balances.transfer event has the following payload \[from, to, value\]
