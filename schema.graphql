@@ -2,26 +2,50 @@
 # Add the `@index` or `@index(unique: true)` annotation after any non-key field
 # https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
 
-type CosmosTransfers @entity {
+type Transfer @entity {
+  """
+  id field is always required and must look like this
+  """
   id: ID!
-  blockHeight: BigInt
-  txHash: String
-  fromAddress: Address!
-  toAddress: Address!
-  amount: String
-  denomination: String
+  """
+  Amount that is transferred
+  """
+  amount: BigInt!
+  """
+  The block height of the transfer
+  """
+  blockNumber: Int!
+  """
+  The date of the transfer
+  """
+  date: Date
+  """
+  The account that transfers are made from
+  """
+  from: Account!
+  """
+  The account that transfers are made to
+  """
+  to: Account!
 }
 
-type EVMTransfers @entity {
-  id: ID! # Transaction hash
-  value: BigInt!
-  to: Address!
-  from: Address!
-  contractAddress: Address!
-}
-
-type Address @entity {
+type Account @entity {
+  """
+  id field is always required and must look like this
+  """
   id: ID!
-  cosmosAddress: String!
-  evmAddress: String!
+  """
+  The public key of this account (same across all Polkadot parachains)
+  """
+  publicKey: String!
+  """
+  The first block on which we see a transfer involving this account
+  """
+  firstTransferBlock: Int
+  """
+  The most recent block on which we see a transfer involving this account
+  """
+  lastTransferBlock: Int
+  sentTransfers: [Transfer] @derivedFrom(field: "from") # These are virtual properties to help us navigate to the correct foreign key of Transfer
+  recievedTransfers: [Transfer] @derivedFrom(field: "to") # These are virtual properties to help us navigate to the correct foreign key of Transfer
 }
