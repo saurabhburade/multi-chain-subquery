@@ -1,0 +1,39 @@
+# // Auto-generated , DO NOT EDIT
+specVersion: 1.0.0
+version: 0.0.1
+name: avail-starter
+description: >-
+  This project can be used as a starting point for developing your SubQuery
+  project. It indexes all transfers on Avail network
+runner:
+  node:
+    name: '@subql/node'
+    version: '>=4.6.6'
+    options:
+      historical: true
+  query:
+    name: '@subql/query'
+    version: '*'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0xb91746b45e0346cc2f815a520b9c6cb4d5c0902af848db0a80f85932d2e8276a'
+  endpoint:
+    - 'wss://zeref-api.slowops.xyz/ws'
+  chaintypes:
+    file: ./dist/chaintypes.js
+  bypassBlocks:
+    - 272000-280500
+dataSources:
+  - name: main
+    kind: substrate/Runtime
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - kind: substrate/EventHandler
+          handler: handleEvent
+          filter:
+            module: balances
+            method: Transfer
+        - kind: substrate/BlockHandler
+          handler: handleBlock

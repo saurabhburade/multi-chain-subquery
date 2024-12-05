@@ -1,0 +1,35 @@
+# // Auto-generated , DO NOT EDIT
+specVersion: 1.0.0
+version: 0.0.1
+name: uniswap-v3
+description: >-
+  This project can be use as a starting point for developing your new Ethereum
+  SubQuery project
+runner:
+  node:
+    name: '@subql/node-ethereum'
+    version: '>=3.0.0'
+  query:
+    name: '@subql/query'
+    version: '*'
+schema:
+  file: ./schema.graphql
+options:
+  abi: Oracle
+
+
+network:
+  chainId: '1'
+  endpoint:
+    - https://ethereum.rpc.subquery.network/public
+dataSources:
+  - kind: ethereum/Runtime
+    startBlock: 20229117
+    assets:
+      Oracle:
+        file: ./abis/OneinchABI.abi.json
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - kind: ethereum/BlockHandler
+          handler: handleEthBlock

@@ -22,12 +22,18 @@
   "license": "MIT",
   "devDependencies": {
     "@cosmjs/stargate": "^0.28.9",
-    "@subql/cli": "latest",
-    "@subql/testing": "latest",
     "@subql/node-cosmos": "latest",
     "@subql/types-ethereum": "latest",
+    "abab": "^2.0.6",
+    "@polkadot/api": "^12",
+    "@subql/types": "latest",
     "typescript": "^5.2.2",
-    "abab": "^2.0.6"
+    "@subql/cli": "latest",
+    "@subql/testing": "latest",
+    "@subql/node": "latest",
+    "dotenv": "latest",
+    "@subql/node-ethereum": "latest",
+    "ethers": "^5.7.2"
   },
   "dependencies": {
     "@subql/types-cosmos": "latest",
@@ -35,5 +41,8 @@
     "pino": "^7.8.0",
     "ts-proto": "^1.112.1",
     "tslib": "^2.3.1"
+  },
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
   }
 }

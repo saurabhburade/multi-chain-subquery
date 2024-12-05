@@ -17,8 +17,8 @@ services:
       timeout: 5s
       retries: 5
 
-  subquery-node-cosmos:
-    image: subquerynetwork/subql-node-cosmos:latest
+  subquery-node-avail:
+    image: subquerynetwork/subql-node-substrate:latest
     restart: unless-stopped
     environment:
       DB_USER: postgres
@@ -33,7 +33,7 @@ services:
       - --multi-chain
       - --db-schema=multi-chain
       - --disable-historical
-      - -f=app/kava-cosmos.yaml
+      - -f=app/avail.yaml
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
@@ -56,7 +56,7 @@ services:
       - --multi-chain
       - --db-schema=multi-chain
       - --disable-historical
-      - -f=app/kava-evm.yaml
+      - -f=app/ethereum.yaml
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
