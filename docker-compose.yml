@@ -73,9 +73,6 @@ services:
     image: subquerynetwork/subql-query:latest
     ports:
       - 3000:3000
-    depends_on:
-      "postgres":
-        condition: service_healthy
     restart: unless-stopped
     environment:
       DB_USER: postgres
