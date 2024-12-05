@@ -11,10 +11,10 @@ import { EthereumBlock } from "@subql/types-ethereum";
 import { OneinchABIAbi__factory, OneinchABIAbi } from "../types/contracts";
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
-  logger.info(
-    `New BLOCK AVAIL ::::::  ${block.block.header.number.toString()}`
-  );
-  logger.info(`New BLOCK AVAIL time::::::  ${block.timestamp}`);
+  // logger.info(
+  //   `New BLOCK AVAIL ::::::  ${block.block.header.number.toString()}`
+  // );
+  // logger.info(`New BLOCK AVAIL time::::::  ${block.timestamp}`);
 
   // Do something with each block handler here
 }

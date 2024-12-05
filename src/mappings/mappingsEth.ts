@@ -6,7 +6,7 @@ const ORACLE_ADDRESS = "0x0AdDd25a91563696D8567Df78D5A01C9a991F9B8";
 
 export async function handleEthBlock(block: EthereumBlock): Promise<void> {
   logger.info(`New BLOCK ETHEREUM ::::::  ${block.number.toString()}`);
-  logger.info(`New BLOCK ETHEREUM time::::::  ${block.timestamp.toString()}`);
+  // logger.info(`New BLOCK ETHEREUM time::::::  ${block.timestamp.toString()}`);
   // Do something with each block handler here
   //   const provider = new ethers.providers.JsonRpcProvider(
   //     "https://eth.llamarpc.com"
