@@ -21,7 +21,12 @@ options:
 network:
   chainId: '1'
   endpoint:
-    - https://ethereum.rpc.subquery.network/public
+    - https://eth.llamarpc.com
+    - https://eth-mainnet.public.blastapi.io
+    - https://rpc.mevblocker.io	
+    - https://1rpc.io/eth
+
+
 dataSources:
   - kind: ethereum/Runtime
     startBlock: 20229117
