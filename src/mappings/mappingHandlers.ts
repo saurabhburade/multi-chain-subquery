@@ -462,9 +462,12 @@ export const updateSession = async (blockRecord: Block, digest: Digest) => {
         sessionId.toString(),
         validators.map((x) => x.toString())
       );
-      logger.info("FOUND VALIDATORS ::: ", validators);
+      logger.info(
+        "FOUND VALIDATORS ::: ",
+        validators.map((x) => x.toString())
+      );
       await sessionRecord.save();
-      await setAccountsAsValidators(validators);
+      await setAccountsAsValidators(validators.map((x) => x.toString()));
     }
     blockRecord.sessionId = Number(sessionRecord.id);
     const author = extractAuthor(
