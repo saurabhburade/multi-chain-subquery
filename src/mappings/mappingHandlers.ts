@@ -63,7 +63,7 @@ export interface CorrectSubstrateBlock extends SubstrateBlock {
 
 export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const blockHeader = block.block.header;
-  let blockRecord = await Block.getByHash(blockHeader.hash.toString());
+  let blockRecord = await Block.get(blockHeader.number.toString());
   if (blockRecord === undefined || blockRecord === null) {
     try {
       blockRecord = new Block(
