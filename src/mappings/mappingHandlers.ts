@@ -234,18 +234,18 @@ export const blockHandler = async (
 ): Promise<void> => {
   try {
     const blockHeader = block.block.header;
-    const blockRecord = new Block(
-      blockHeader.number.toString(),
-      blockHeader.number.toNumber(),
-      blockHeader.hash.toString(),
-      block.timestamp,
-      blockHeader.parentHash.toString(),
-      blockHeader.stateRoot.toString(),
-      blockHeader.extrinsicsRoot.toString(),
-      block.specVersion,
-      block.block.extrinsics.length,
-      block.events.length
-    );
+    const blockRecord = await Block.create({
+      id: blockHeader.number.toString(),
+      number: blockHeader.number.toNumber(),
+      hash: blockHeader.hash.toString(),
+      timestamp: block.timestamp,
+      parentHash: blockHeader.parentHash.toString(),
+      stateRoot: blockHeader.stateRoot.toString(),
+      extrinsicsRoot: blockHeader.extrinsicsRoot.toString(),
+      runtimeVersion: block.specVersion,
+      nbExtrinsics: block.block.extrinsics.length,
+      nbEvents: block.events.length,
+    });
     // await Promise.all([
     //   handleLogs(blockHeader.number.toString(), blockHeader.digest),
     //   updateSession(blockRecord, blockHeader.digest),
