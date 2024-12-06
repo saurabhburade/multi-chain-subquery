@@ -234,18 +234,22 @@ export const blockHandler = async (
 ): Promise<void> => {
   try {
     const blockHeader = block.block.header;
-    const blockRecord = await Block.create({
-      id: blockHeader.number.toString(),
-      number: blockHeader.number.toNumber(),
-      hash: blockHeader.hash.toString(),
-      timestamp: block.timestamp,
-      parentHash: blockHeader.parentHash.toString(),
-      stateRoot: blockHeader.stateRoot.toString(),
-      extrinsicsRoot: blockHeader.extrinsicsRoot.toString(),
-      runtimeVersion: block.specVersion,
-      nbExtrinsics: block.block.extrinsics.length,
-      nbEvents: block.events.length,
-    });
+    let blockRecord = await Block.get(blockHeader.number.toString());
+    if (blockRecord === undefined && blockRecord === null) {
+      blockRecord = await Block.create({
+        id: blockHeader.number.toString(),
+        number: blockHeader.number.toNumber(),
+        hash: blockHeader.hash.toString(),
+        timestamp: block.timestamp,
+        parentHash: blockHeader.parentHash.toString(),
+        stateRoot: blockHeader.stateRoot.toString(),
+        extrinsicsRoot: blockHeader.extrinsicsRoot.toString(),
+        runtimeVersion: block.specVersion,
+        nbExtrinsics: block.block.extrinsics.length,
+        nbEvents: block.events.length,
+      });
+    }
+
     // await Promise.all([
     //   handleLogs(blockHeader.number.toString(), blockHeader.digest),
     //   updateSession(blockRecord, blockHeader.digest),
@@ -256,7 +260,7 @@ export const blockHandler = async (
     //   ),
     //   handleExtension(blockHeader),
     // ]);
-    return await blockRecord.save();
+    return await blockRecord!.save();
   } catch (err) {
     logger.error("record block error:" + block.block.header.number.toNumber());
     logger.error("record block error detail:" + err);
