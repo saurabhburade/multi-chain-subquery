@@ -463,7 +463,7 @@ export const updateSession = async (blockRecord: Block, digest: Digest) => {
         validators.map((x) => x.toString())
       );
       logger.info("FOUND VALIDATORS ::: ", validators.length);
-      if (validators.length) {
+      if (Number(validators.length) > 0) {
         await sessionRecord.save();
         await setAccountsAsValidators(validators.map((x) => x.toString()));
       }
