@@ -63,7 +63,7 @@ export interface CorrectSubstrateBlock extends SubstrateBlock {
 
 export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const blockHeader = block.block.header;
-  let blockRecord = await Block.get(blockHeader.number.toString());
+  let blockRecord = await Block.getByHash(blockHeader.hash.toString());
   if (blockRecord === undefined || blockRecord === null) {
     try {
       blockRecord = new Block(
@@ -78,6 +78,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         block.block.extrinsics.length,
         block.events.length
       );
+
       // blockRecord = Block.create({
       //   id: blockHeader.number.toString(),
       //   number: blockHeader.number.toNumber(),
