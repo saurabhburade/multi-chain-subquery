@@ -34,6 +34,7 @@ services:
       - --db-schema=multi-chain
       - --disable-historical
       - -f=app/avail.yaml
+      - --allow-schema-migration
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
@@ -57,6 +58,8 @@ services:
       - --db-schema=multi-chain
       - --disable-historical
       - -f=app/ethereum.yaml
+      - --allow-schema-migration
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
