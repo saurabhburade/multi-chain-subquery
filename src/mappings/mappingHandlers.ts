@@ -64,29 +64,54 @@ export interface CorrectSubstrateBlock extends SubstrateBlock {
 export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const blockHeader = block.block.header;
   let blockRecord = await Block.get(blockHeader.number.toString());
-  if (!blockRecord) {
-    blockRecord = Block.create({
-      id: blockHeader.number.toString(),
-      number: blockHeader.number.toNumber(),
-      hash: blockHeader.hash.toString(),
-      timestamp: block.timestamp,
-      parentHash: blockHeader.parentHash.toString(),
-      stateRoot: blockHeader.stateRoot.toString(),
-      extrinsicsRoot: blockHeader.extrinsicsRoot.toString(),
-      runtimeVersion: block.specVersion,
-      nbExtrinsics: block.block.extrinsics.length,
-      nbEvents: block.events.length,
-      author: "",
-      sessionId: 1,
-    });
-    logger.info(
-      "BLOCK SAVED ::::::::::::::::::" +
-        block.block.header.number.toNumber() +
-        "::::::::::::::::::" +
-        blockHeader.hash.toString()
-    );
+  if (blockRecord === undefined || blockRecord === null) {
+    try {
+      blockRecord = new Block(
+        blockHeader.number.toString(),
+        blockHeader.number.toNumber(),
+        blockHeader.hash.toString(),
+        block.timestamp,
+        blockHeader.parentHash.toString(),
+        blockHeader.stateRoot.toString(),
+        blockHeader.extrinsicsRoot.toString(),
+        block.specVersion,
+        block.block.extrinsics.length,
+        block.events.length
+      );
+      // blockRecord = Block.create({
+      //   id: blockHeader.number.toString(),
+      //   number: blockHeader.number.toNumber(),
+      //   hash: blockHeader.hash.toString(),
+      //   timestamp: block.timestamp,
+      //   parentHash: blockHeader.parentHash.toString(),
+      //   stateRoot: blockHeader.stateRoot.toString(),
+      //   extrinsicsRoot: blockHeader.extrinsicsRoot.toString(),
+      //   runtimeVersion: block.specVersion,
+      //   nbExtrinsics: block.block.extrinsics.length,
+      //   nbEvents: block.events.length,
+      //   author: "",
+      //   sessionId: 1,
+      // });
+      blockRecord.author = "";
+      blockRecord.sessionId = 1;
 
-    return await blockRecord.save();
+      logger.info(
+        "BLOCK SAVED ::::::::::::::::::" +
+          block.block.header.number.toNumber() +
+          "::::::::::::::::::" +
+          blockHeader.hash.toString()
+      );
+
+      return await blockRecord.save();
+    } catch (error) {
+      logger.error(
+        "BLOCK SAVE ERRORRRRRR ::::::::::::::::::" +
+          block.block.header.number.toNumber() +
+          "::::::::::::::::::" +
+          blockHeader.hash.toString()
+      );
+      logger.error("BLOCK SAVE ERRORRRRRR ::::::::::::::::::", error);
+    }
   }
 }
 
