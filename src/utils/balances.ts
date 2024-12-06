@@ -13,16 +13,16 @@ type AccountData = {
 
 export const updateAccounts = async (addresses: string[], timestamp: Date) => {
   try {
-    // const accountsInDb: AccountEntity[] = await store.getByFields(
-    //   "AccountEntity",
-    //   [["id", "in", addresses]],
-    //   {
-    //     limit: addresses.length,
-    //   }
-    // );
-    const accountsInDb: AccountEntity[] = await Promise.all(
-      addresses.map((accountId) => store.get("AccountEntity", accountId))
+    const accountsInDb: AccountEntity[] = await store.getByFields(
+      "AccountEntity",
+      [["address", "in", addresses]],
+      {
+        limit: addresses.length,
+      }
     );
+    // const accountsInDb: AccountEntity[] = await Promise.all(
+    //   addresses.map((accountId) => store.get("AccountEntity", accountId))
+    // );
     const accountsToCreate: AccountEntity[] = [];
     const accountsToUpdate: AccountEntity[] = [];
     // @ts-ignore
@@ -62,7 +62,7 @@ export const updateAccounts = async (addresses: string[], timestamp: Date) => {
           : balanceFree.toString();
         let record = accountsInDb.find((x) => x.id === address);
         if (!record) {
-          record = new AccountEntity(address, date, date, timestamp);
+          record = new AccountEntity(address, date, date, timestamp, address);
           isNew = true;
         }
         record.amount = amount;

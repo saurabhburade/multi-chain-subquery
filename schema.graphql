@@ -131,6 +131,7 @@ type AccountEntity @entity {
   createdAt: Date!
   updatedAt: Date!
   timestampCreation: Date! @index
+  address: String! @index
 }
 
 type DataSubmission @entity {
