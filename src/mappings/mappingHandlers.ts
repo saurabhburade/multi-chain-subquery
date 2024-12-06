@@ -73,150 +73,150 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       // @ts-ignore
       await blockHandler(block, specVersion);
 
-      const events: Event[] = [];
-      const calls: Extrinsic[] = [];
-      const daSubmissions: DataSubmission[] = [];
-      const extIdToDetails: {
-        [key: number]: {
-          nbEvents: number;
-          success?: boolean;
-          fee?: string;
-          feeRounded?: number;
-        };
-      } = {};
-      const accountToUpdate: string[] = [];
-      const transfers: TransferEntity[] = [];
+      // const events: Event[] = [];
+      // const calls: Extrinsic[] = [];
+      // const daSubmissions: DataSubmission[] = [];
+      // const extIdToDetails: {
+      //   [key: number]: {
+      //     nbEvents: number;
+      //     success?: boolean;
+      //     fee?: string;
+      //     feeRounded?: number;
+      //   };
+      // } = {};
+      // const accountToUpdate: string[] = [];
+      // const transfers: TransferEntity[] = [];
 
-      // Events count / setup / First filtering
-      if (ENABLE_LOG) logger.info(`Block events - ${block.events.length}`);
-      block.events.map((evt, idx) => {
-        const key = `${evt.event.section}.${evt.event.method}`;
-        const relatedExtrinsicIndex = evt.phase.isApplyExtrinsic
-          ? evt.phase.asApplyExtrinsic.toNumber()
-          : -1;
-        if (relatedExtrinsicIndex !== -1) {
-          if (extIdToDetails[relatedExtrinsicIndex] === undefined) {
-            extIdToDetails[relatedExtrinsicIndex] = {
-              nbEvents: 0,
-            };
-          }
-          extIdToDetails[relatedExtrinsicIndex].nbEvents += 1;
-          if (key === "transactionPayment.TransactionFeePaid") {
-            let fees = getFeesFromEvent(evt.event.data.toJSON() as any[]);
-            extIdToDetails[relatedExtrinsicIndex].fee = fees.fee;
-            extIdToDetails[relatedExtrinsicIndex].feeRounded = fees.feeRounded;
-          }
-          if (key === "system.ExtrinsicSuccess")
-            extIdToDetails[relatedExtrinsicIndex].success = true;
-        }
-        if (!filteredOutEvents.includes(key)) {
-          events.push(
-            handleEvent(
-              blockNumberString,
-              idx,
-              evt,
-              relatedExtrinsicIndex,
-              block.timestamp
-            )
-          );
-          // Handle transfers
-          if (transferEvents.includes(key)) {
-            transfers.push(
-              transferHandler(
-                evt,
-                blockNumber.toString(),
-                blockHash,
-                block.timestamp,
-                relatedExtrinsicIndex !== -1
-                  ? `${blockNumber}-${relatedExtrinsicIndex}`
-                  : "",
-                idx
-              )
-            );
-          }
-        }
+      // // Events count / setup / First filtering
+      // if (ENABLE_LOG) logger.info(`Block events - ${block.events.length}`);
+      // block.events.map((evt, idx) => {
+      //   const key = `${evt.event.section}.${evt.event.method}`;
+      //   const relatedExtrinsicIndex = evt.phase.isApplyExtrinsic
+      //     ? evt.phase.asApplyExtrinsic.toNumber()
+      //     : -1;
+      //   if (relatedExtrinsicIndex !== -1) {
+      //     if (extIdToDetails[relatedExtrinsicIndex] === undefined) {
+      //       extIdToDetails[relatedExtrinsicIndex] = {
+      //         nbEvents: 0,
+      //       };
+      //     }
+      //     extIdToDetails[relatedExtrinsicIndex].nbEvents += 1;
+      //     if (key === "transactionPayment.TransactionFeePaid") {
+      //       let fees = getFeesFromEvent(evt.event.data.toJSON() as any[]);
+      //       extIdToDetails[relatedExtrinsicIndex].fee = fees.fee;
+      //       extIdToDetails[relatedExtrinsicIndex].feeRounded = fees.feeRounded;
+      //     }
+      //     if (key === "system.ExtrinsicSuccess")
+      //       extIdToDetails[relatedExtrinsicIndex].success = true;
+      //   }
+      //   if (!filteredOutEvents.includes(key)) {
+      //     events.push(
+      //       handleEvent(
+      //         blockNumberString,
+      //         idx,
+      //         evt,
+      //         relatedExtrinsicIndex,
+      //         block.timestamp
+      //       )
+      //     );
+      //     // Handle transfers
+      //     if (transferEvents.includes(key)) {
+      //       transfers.push(
+      //         transferHandler(
+      //           evt,
+      //           blockNumber.toString(),
+      //           blockHash,
+      //           block.timestamp,
+      //           relatedExtrinsicIndex !== -1
+      //             ? `${blockNumber}-${relatedExtrinsicIndex}`
+      //             : "",
+      //           idx
+      //         )
+      //       );
+      //     }
+      //   }
 
-        // Handle account updates
-        if ([...allBalanceEvents, ...feeEvents].includes(key)) {
-          const [who] = evt.event.data;
-          const account = who.toString();
-          if (!accountToUpdate.includes(account)) accountToUpdate.push(account);
-        }
-      });
-      if (ENABLE_LOG) logger.info(`Block events filtered - ${events.length}`);
+      //   // Handle account updates
+      //   if ([...allBalanceEvents, ...feeEvents].includes(key)) {
+      //     const [who] = evt.event.data;
+      //     const account = who.toString();
+      //     if (!accountToUpdate.includes(account)) accountToUpdate.push(account);
+      //   }
+      // });
+      // if (ENABLE_LOG) logger.info(`Block events filtered - ${events.length}`);
 
-      // Extrinsics
-      if (ENABLE_LOG)
-        logger.info(`Block Extrinsics - ${block.block.extrinsics.length}`);
-      block.block.extrinsics.map((extrinsic, idx) => {
-        const methodData = extrinsic.method;
-        const extrinsicType = `${methodData.section}_${methodData.method}`;
-        const isDataSubmission =
-          extrinsicType === "dataAvailability_submitData";
-        // We use this instead of "wrapExtrinsic" to avoid looping on events
-        const substrateExtrinsic: Omit<
-          SubstrateExtrinsic,
-          "events" | "success"
-        > = {
-          idx,
-          extrinsic,
-          block,
-        };
-        const extraData = extIdToDetails[idx];
-        calls.push(
-          handleCall(
-            `${blockNumberString}-${idx}`,
-            substrateExtrinsic,
-            extraData
-          )
-        );
-        if (isDataSubmission)
-          daSubmissions.push(
-            handleDataSubmission(
-              `${blockNumberString}-${idx}`,
-              substrateExtrinsic,
-              extraData
-            )
-          );
-      });
+      // // Extrinsics
+      // if (ENABLE_LOG)
+      //   logger.info(`Block Extrinsics - ${block.block.extrinsics.length}`);
+      // block.block.extrinsics.map((extrinsic, idx) => {
+      //   const methodData = extrinsic.method;
+      //   const extrinsicType = `${methodData.section}_${methodData.method}`;
+      //   const isDataSubmission =
+      //     extrinsicType === "dataAvailability_submitData";
+      //   // We use this instead of "wrapExtrinsic" to avoid looping on events
+      //   const substrateExtrinsic: Omit<
+      //     SubstrateExtrinsic,
+      //     "events" | "success"
+      //   > = {
+      //     idx,
+      //     extrinsic,
+      //     block,
+      //   };
+      //   const extraData = extIdToDetails[idx];
+      //   calls.push(
+      //     handleCall(
+      //       `${blockNumberString}-${idx}`,
+      //       substrateExtrinsic,
+      //       extraData
+      //     )
+      //   );
+      //   if (isDataSubmission)
+      //     daSubmissions.push(
+      //       handleDataSubmission(
+      //         `${blockNumberString}-${idx}`,
+      //         substrateExtrinsic,
+      //         extraData
+      //       )
+      //     );
+      // });
 
-      // Handle accounts
-      let accountToUpdateValue = await AccounToUpdateValue.get("0");
-      if (!accountToUpdateValue) {
-        accountToUpdateValue = new AccounToUpdateValue("0", []);
-      }
-      accountToUpdateValue.accounts = [
-        ...new Set([...accountToUpdateValue.accounts, ...accountToUpdate]),
-      ];
-      if (
-        accountToUpdateValue.accounts.length > 250 ||
-        (accountToUpdateValue.accounts.length > 0 && blockNumber % 50 === 0)
-      ) {
-        const accounts = await updateAccounts(
-          accountToUpdateValue.accounts,
-          block.timestamp
-        );
-        await Promise.all([
-          store.bulkCreate("AccountEntity", accounts.accountsToCreate),
-          store.bulkUpdate("AccountEntity", accounts.accountsToUpdate),
-        ]);
-        if (ENABLE_LOG)
-          logger.info(
-            `Saved ${accountToUpdateValue.accounts.length} accounts at block ${blockNumberString}`
-          );
-        accountToUpdateValue.accounts = [];
-      }
-      await accountToUpdateValue.save();
+      // // Handle accounts
+      // let accountToUpdateValue = await AccounToUpdateValue.get("0");
+      // if (!accountToUpdateValue) {
+      //   accountToUpdateValue = new AccounToUpdateValue("0", []);
+      // }
+      // accountToUpdateValue.accounts = [
+      //   ...new Set([...accountToUpdateValue.accounts, ...accountToUpdate]),
+      // ];
+      // if (
+      //   accountToUpdateValue.accounts.length > 250 ||
+      //   (accountToUpdateValue.accounts.length > 0 && blockNumber % 50 === 0)
+      // ) {
+      //   const accounts = await updateAccounts(
+      //     accountToUpdateValue.accounts,
+      //     block.timestamp
+      //   );
+      //   await Promise.all([
+      //     store.bulkCreate("AccountEntity", accounts.accountsToCreate),
+      //     store.bulkUpdate("AccountEntity", accounts.accountsToUpdate),
+      //   ]);
+      //   if (ENABLE_LOG)
+      //     logger.info(
+      //       `Saved ${accountToUpdateValue.accounts.length} accounts at block ${blockNumberString}`
+      //     );
+      //   accountToUpdateValue.accounts = [];
+      // }
+      // await accountToUpdateValue.save();
 
       // Save in db in parallel
-      if (ENABLE_LOG) logger.info(`Save in db`);
-      await Promise.all([
-        store.bulkCreate("Event", events),
-        store.bulkCreate("Extrinsic", calls),
-        store.bulkCreate("DataSubmission", daSubmissions),
-        store.bulkCreate("TransferEntity", transfers),
-      ]);
-      if (ENABLE_LOG) logger.info(`Finished in db`);
+      // if (ENABLE_LOG) logger.info(`Save in db`);
+      // await Promise.all([
+      //   store.bulkCreate("Event", events),
+      //   store.bulkCreate("Extrinsic", calls),
+      //   store.bulkCreate("DataSubmission", daSubmissions),
+      //   store.bulkCreate("TransferEntity", transfers),
+      // ]);
+      // if (ENABLE_LOG) logger.info(`Finished in db`);
     } else {
       if (ENABLE_LOG) logger.info("Block already exist, skipping :)");
     }
