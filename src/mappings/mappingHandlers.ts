@@ -61,9 +61,29 @@ export interface CorrectSubstrateBlock extends SubstrateBlock {
   timestamp: Date;
 }
 
-export async function handleBlock(
-  block: CorrectSubstrateBlock
-): Promise<void> { }
+export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
+  const blockHeader = block.block.header;
+  let blockRecord = await Block.get(blockHeader.number.toString());
+  if (!blockRecord) {
+    blockRecord = Block.create({
+      id: blockHeader.number.toString(),
+      number: blockHeader.number.toNumber(),
+      hash: blockHeader.hash.toString(),
+      timestamp: block.timestamp,
+      parentHash: blockHeader.parentHash.toString(),
+      stateRoot: blockHeader.stateRoot.toString(),
+      extrinsicsRoot: blockHeader.extrinsicsRoot.toString(),
+      runtimeVersion: block.specVersion,
+      nbExtrinsics: block.block.extrinsics.length,
+      nbEvents: block.events.length,
+    });
+    logger.info(
+      "BLOCK SAVED ::::::::::::::::::" + block.block.header.number.toNumber()
+    );
+
+    return await blockRecord.save();
+  }
+}
 
 export const blockHandler = async (
   block: CorrectSubstrateBlock,
