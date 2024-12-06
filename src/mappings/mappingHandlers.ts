@@ -256,7 +256,7 @@ export const blockHandler = async (
       ),
       handleExtension(blockHeader),
     ]);
-    await blockRecord.save();
+    return await blockRecord.save();
   } catch (err) {
     logger.error("record block error:" + block.block.header.number.toNumber());
     logger.error("record block error detail:" + err);
