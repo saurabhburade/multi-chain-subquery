@@ -13,17 +13,22 @@ type AccountData = {
 
 export const updateAccounts = async (addresses: string[], timestamp: Date) => {
   try {
-    const accountsInDb: AccountEntity[] = await store.getByFields(
-      "AccountEntity",
-      [["id", "in", addresses]],
-      {
-        limit: addresses.length,
-      }
+    // const accountsInDb: AccountEntity[] = await store.getByFields(
+    //   "AccountEntity",
+    //   [["id", "in", addresses]],
+    //   {
+    //     limit: addresses.length,
+    //   }
+    // );
+    const accountsInDb: AccountEntity[] = await Promise.all(
+      addresses.map((accountId) => store.get("AccountEntity", accountId))
     );
     const accountsToCreate: AccountEntity[] = [];
     const accountsToUpdate: AccountEntity[] = [];
     // @ts-ignore
-    const res = await(api as any).query.system.account.multi(addresses) as any;
+    const res = (await (api as any).query.system.account.multi(
+      addresses
+    )) as any;
     res.map(({ data: balance }: { data: AccountData }, idx: number) => {
       if (balance) {
         let isNew = false;

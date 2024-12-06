@@ -540,13 +540,16 @@ export const handleExtension = async (blockHeader: Header) => {
 };
 
 export const setAccountsAsValidators = async (accounts: string[]) => {
-  const accountsInDb: AccountEntity[] = await store.getByFields(
-    "AccountEntity",
-    [["id", "in", accounts]],
-    {
-      limit: accounts.length,
-    }
+  const accountsInDb: AccountEntity[] = await Promise.all(
+    accounts.map((accountId) => store.get("AccountEntity", accountId))
   );
+  // const accountsInDb: AccountEntity[] = await store.getByFields(
+  //   "AccountEntity",
+  //   [["id", "in", accounts]],
+  //   {
+  //     limit: accounts.length,
+  //   }
+  // );
   const accountsToSave = accountsInDb.map((x) => {
     x.validator = true;
     x.validatorSessionParticipated = (x.validatorSessionParticipated || 0) + 1;

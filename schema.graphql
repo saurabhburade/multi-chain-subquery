@@ -119,7 +119,7 @@ type TransferEntity @entity {
 }
 
 type AccountEntity @entity {
-  id: ID! @index
+  id: ID!
   validator: Boolean
   validatorSessionParticipated: Int
   amount: String
