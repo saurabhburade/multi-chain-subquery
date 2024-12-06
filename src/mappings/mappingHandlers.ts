@@ -462,6 +462,7 @@ export const updateSession = async (blockRecord: Block, digest: Digest) => {
         sessionId.toString(),
         validators.map((x) => x.toString())
       );
+      logger.info("FOUND VALIDATORS ::: ", validators);
       await sessionRecord.save();
       await setAccountsAsValidators(validators);
     }
@@ -543,6 +544,9 @@ export const setAccountsAsValidators = async (accounts: string[]) => {
   // const accountsInDb: AccountEntity[] = await Promise.all(
   //   accounts.map((accountId) => store.get("AccountEntity", accountId))
   // );
+  accounts.forEach((acc) => {
+    logger.info("547 account :: ", [acc]);
+  });
   const accountsInDb: AccountEntity[] = await store.getByFields(
     "AccountEntity",
     [["address", "in", accounts]],
