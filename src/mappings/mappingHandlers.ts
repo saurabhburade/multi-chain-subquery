@@ -235,7 +235,7 @@ export const blockHandler = async (
   try {
     const blockHeader = block.block.header;
     let blockRecord = await Block.get(blockHeader.number.toString());
-    if (blockRecord === undefined && blockRecord === null) {
+    if (!blockRecord) {
       blockRecord = await Block.create({
         id: blockHeader.number.toString(),
         number: blockHeader.number.toNumber(),
@@ -249,6 +249,15 @@ export const blockHandler = async (
         nbEvents: block.events.length,
       });
     }
+    blockRecord.number = blockHeader.number.toNumber();
+    blockRecord.hash = blockHeader.hash.toString();
+    blockRecord.timestamp = block.timestamp;
+    blockRecord.parentHash = blockHeader.parentHash.toString();
+    blockRecord.stateRoot = blockHeader.stateRoot.toString();
+    blockRecord.extrinsicsRoot = blockHeader.extrinsicsRoot.toString();
+    blockRecord.runtimeVersion = block.specVersion;
+    blockRecord.nbExtrinsics = block.block.extrinsics.length;
+    blockRecord.nbEvents = block.events.length;
 
     // await Promise.all([
     //   handleLogs(blockHeader.number.toString(), blockHeader.digest),
@@ -260,7 +269,7 @@ export const blockHandler = async (
     //   ),
     //   handleExtension(blockHeader),
     // ]);
-    return await blockRecord!.save();
+    return await blockRecord.save();
   } catch (err) {
     logger.error("record block error:" + block.block.header.number.toNumber());
     logger.error("record block error detail:" + err);
