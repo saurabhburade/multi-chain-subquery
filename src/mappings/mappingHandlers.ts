@@ -76,9 +76,14 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       runtimeVersion: block.specVersion,
       nbExtrinsics: block.block.extrinsics.length,
       nbEvents: block.events.length,
+      author: "",
+      sessionId: 1,
     });
     logger.info(
-      "BLOCK SAVED ::::::::::::::::::" + block.block.header.number.toNumber()
+      "BLOCK SAVED ::::::::::::::::::" +
+        block.block.header.number.toNumber() +
+        "::::::::::::::::::" +
+        blockHeader.hash.toString()
     );
 
     return await blockRecord.save();
