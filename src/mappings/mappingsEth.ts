@@ -15,6 +15,7 @@ export async function handleEthBlock(block: EthereumBlock): Promise<void> {
 
   const oracleContract = OneinchABIAbi__factory.connect(
     ORACLE_ADDRESS,
+    // @ts-ignore
     api as any
   );
   const eth = await oracleContract.getRate(

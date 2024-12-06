@@ -21,12 +21,8 @@
   "author": "SubQuery Team",
   "license": "MIT",
   "devDependencies": {
-    "@cosmjs/stargate": "^0.28.9",
-    "@subql/node-cosmos": "latest",
-    "@subql/types-ethereum": "latest",
     "abab": "^2.0.6",
     "@polkadot/api": "^12",
-    "@subql/types": "latest",
     "typescript": "^5.2.2",
     "@subql/cli": "latest",
     "@subql/testing": "latest",
@@ -36,7 +32,8 @@
     "ethers": "^5.7.2"
   },
   "dependencies": {
-    "@subql/types-cosmos": "latest",
+    "@subql/types": "latest",
+    "@subql/types-ethereum": "latest",
     "@types/node": "^17.0.21",
     "pino": "^7.8.0",
     "ts-proto": "^1.112.1",

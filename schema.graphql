@@ -12,51 +12,139 @@ type PriceFeed @entity {
   ethPrice: Float!
   availPrice: Float!
 }
-
-type Transfer @entity {
-  """
-  id field is always required and must look like this
-  """
-  id: ID!
-  """
-  Amount that is transferred
-  """
-  amount: BigInt!
-  """
-  The block height of the transfer
-  """
-  blockNumber: Int!
-  """
-  The date of the transfer
-  """
-  date: Date
-  """
-  The account that transfers are made from
-  """
-  from: Account!
-  """
-  The account that transfers are made to
-  """
-  to: Account!
+type SpecVersion @entity {
+  id: ID! #specVersion
+  blockHeight: BigInt!
 }
 
-type Account @entity {
-  """
-  id field is always required and must look like this
-  """
+type Block @entity {
   id: ID!
-  """
-  The public key of this account (same across all Polkadot parachains)
-  """
-  publicKey: String!
-  """
-  The first block on which we see a transfer involving this account
-  """
-  firstTransferBlock: Int
-  """
-  The most recent block on which we see a transfer involving this account
-  """
-  lastTransferBlock: Int
-  sentTransfers: [Transfer] @derivedFrom(field: "from") # These are virtual properties to help us navigate to the correct foreign key of Transfer
-  recievedTransfers: [Transfer] @derivedFrom(field: "to") # These are virtual properties to help us navigate to the correct foreign key of Transfer
+  number: Int! @index
+  hash: String! @index(unique: true)
+  timestamp: Date! @index(unique: true)
+  parentHash: String!
+  stateRoot: String!
+  extrinsicsRoot: String!
+  runtimeVersion: Int!
+  nbExtrinsics: Int!
+  nbEvents: Int!
+  author: String @index
+  sessionId: Int @index
+}
+
+type Session @entity {
+  id: ID!
+  validators: [String]!
+}
+
+type Extrinsic @entity {
+  id: ID!
+  block: Block!
+  txHash: String! @index(unique: true)
+  module: String! @index
+  call: String! @index
+  blockHeight: BigInt! @index
+  success: Boolean!
+  isSigned: Boolean!
+  extrinsicIndex: Int!
+  hash: String! @index(unique: true)
+  timestamp: Date! @index
+  signer: String! @index
+  signature: String!
+  fees: String
+  feesRounded: Float @index
+  nonce: Int!
+  argsName: [String]!
+  argsValue: [String]!
+  nbEvents: Int!
+}
+
+type Event @entity {
+  id: ID!
+  block: Block!
+  extrinsicId: String
+  module: String! @index
+  event: String! @index
+  blockHeight: BigInt! @index
+  eventIndex: Int!
+  call: String! @index
+  argsName: [String]!
+  argsValue: [String]!
+  timestamp: Date! @index
+}
+
+type Log @entity {
+  id: ID!
+  block: Block!
+  type: String!
+  engine: String
+  data: String!
+}
+
+type HeaderExtension @entity {
+  id: ID!
+  block: Block!
+  version: String
+}
+
+type Commitment @entity {
+  id: ID!
+  block: Block!
+  headerExtension: HeaderExtension!
+  rows: Int
+  cols: Int
+  dataRoot: String @index
+  commitment: String
+}
+
+type AppLookup @entity {
+  id: ID!
+  block: Block!
+  headerExtension: HeaderExtension!
+  size: Int
+  index: String
+}
+
+type TransferEntity @entity {
+  id: ID!
+  blockId: String! @index
+  blockHash: String!
+  extrinsicId: String!
+  timestamp: Date! @index
+  from: String! @index
+  to: String! @index
+  currency: String!
+  amount: String!
+  amountRounded: Float! @index
+}
+
+type AccountEntity @entity {
+  id: ID!
+  validator: Boolean
+  validatorSessionParticipated: Int
+  amount: String
+  amountFrozen: String
+  amountTotal: String
+  amountRounded: Float @index
+  amountFrozenRounded: Float @index
+  amountTotalRounded: Float @index
+  createdAt: Date!
+  updatedAt: Date!
+  timestampCreation: Date! @index
+}
+
+type DataSubmission @entity {
+  id: ID!
+  extrinsicId: String!
+  timestamp: Date! @index
+  byteSize: Int! @index
+  appId: Int! @index
+  signer: String! @index
+  fees: Float
+  feesPerMb: Float @index
+}
+
+type AccounToUpdateValue @entity {
+  id: ID!
+  accounts: [String]!
 }

@@ -30,10 +30,5 @@ dataSources:
     mapping:
       file: ./dist/index.js
       handlers:
-        - kind: substrate/EventHandler
-          handler: handleEvent
-          filter:
-            module: balances
-            method: Transfer
         - kind: substrate/BlockHandler
           handler: handleBlock
