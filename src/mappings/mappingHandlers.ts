@@ -246,16 +246,16 @@ export const blockHandler = async (
       block.block.extrinsics.length,
       block.events.length
     );
-    await Promise.all([
-      handleLogs(blockHeader.number.toString(), blockHeader.digest),
-      updateSession(blockRecord, blockHeader.digest),
-      updateSpecversion(
-        specVersion,
-        block.specVersion,
-        blockHeader.number.toBigInt()
-      ),
-      handleExtension(blockHeader),
-    ]);
+    // await Promise.all([
+    //   handleLogs(blockHeader.number.toString(), blockHeader.digest),
+    //   updateSession(blockRecord, blockHeader.digest),
+    //   updateSpecversion(
+    //     specVersion,
+    //     block.specVersion,
+    //     blockHeader.number.toBigInt()
+    //   ),
+    //   handleExtension(blockHeader),
+    // ]);
     return await blockRecord.save();
   } catch (err) {
     logger.error("record block error:" + block.block.header.number.toNumber());
