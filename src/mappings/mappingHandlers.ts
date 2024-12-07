@@ -90,20 +90,25 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
-      const httpData = await fetch("https://api.github.com/users/github", {
-        method: "GET",
-        headers: {},
-      });
-      const jsonData = await httpData.json();
-      logger.info(`httpData: ${JSON.stringify(jsonData)}`);
-      const provider = new ethers.providers.JsonRpcProvider(
-        "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9"
-      );
-      const oracleContract = OneinchABIAbi__factory.connect(
-        ORACLE_ADDRESS,
-        // @ts-ignore
-        provider
-      );
+      // const httpData = await fetch("https://api.github.com/users/github", {
+      //   method: "GET",
+      //   headers: {},
+      // });
+      // const httpData = await fetch("https://api.github.com/users/github", {
+      //   method: "POST",
+      //   headers: {},
+      //   body: "0x802431fb000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000000000",
+      // });
+      // const jsonData = await httpData.json();
+      // logger.info(`httpData: ${JSON.stringify(jsonData)}`);
+      // const provider = new ethers.providers.JsonRpcProvider(
+      //   "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9"
+      // );
+      // const oracleContract = OneinchABIAbi__factory.connect(
+      //   ORACLE_ADDRESS,
+      //   // @ts-ignore
+      //   provider
+      // );
       const ife = OneinchABIAbi__factory.createInterface();
       const encodedEth = ife.encodeFunctionData("getRate", [
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
@@ -115,6 +120,56 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
         false,
       ]);
+
+      const rpcDataEth = await fetch(
+        "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
+        {
+          method: "POST",
+          headers: {},
+          body: JSON.stringify({
+            id: 1,
+            jsonrpc: "2.0",
+            method: "eth_call",
+            params: [
+              {
+                to: ORACLE_ADDRESS,
+                data: encodedEth,
+              },
+            ],
+          }),
+          //     {
+          //     method: 'eth_call',
+          //     data: '0x802431fb000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000000000',
+          //   },
+        }
+      );
+      const rpcDataAvail = await fetch(
+        "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
+        {
+          method: "POST",
+          headers: {},
+          body: JSON.stringify({
+            id: 1,
+            jsonrpc: "2.0",
+            method: "eth_call",
+            params: [
+              {
+                to: ORACLE_ADDRESS,
+                data: encodedAvail,
+              },
+            ],
+          }),
+          //     {
+          //     method: 'eth_call',
+          //     data: '0x802431fb000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000000000',
+          //   },
+        }
+      );
+      const ethResultRaw = await rpcDataEth.json();
+      const availResultRaw = await rpcDataAvail.json();
+
+      const decodedEth = ife.decodeFunctionResult("getRate", ethResultRaw);
+      const decodedAvail = ife.decodeFunctionResult("getRate", availResultRaw);
       // ife.decodeFunctionData();
       // const eth = await oracleContract.populateTransaction.getRate(
       //   "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
@@ -126,11 +181,11 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       //   "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
       //   false
       // );
-      if (encodedEth) {
-        logger.info(`New ETH Price Feed::::::  ${encodedEth.toString()}`);
+      if (decodedEth) {
+        logger.info(`New ETH Price Feed::::::  ${decodedEth.toString()}`);
       }
-      if (encodedAvail) {
-        logger.info(`New AVAIL Price Feed::::::  ${encodedAvail.toString()}`);
+      if (decodedAvail) {
+        logger.info(`New AVAIL Price Feed::::::  ${decodedAvail.toString()}`);
       }
 
       // logger.info(`New ETHEREUM Price::::::  ${eth.toString()}`);
