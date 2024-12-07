@@ -21,7 +21,8 @@ options:
 network:
   chainId: '1'
   endpoint:
-    - https://ethereum.rpc.subquery.network/public
+    - https://eth.public-rpc.com
+
 
 dataSources:
   - kind: ethereum/Runtime
