@@ -125,7 +125,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       //   avail.toString(),
       //   ethBlock
       // );
-      logger.info("Expected ETHBLOCK :::: ", ethBlock, blockDate);
+      logger.info("Expected ETHBLOCK :::: ", blockDate.toString());
       blockRecord.author = "";
       blockRecord.sessionId = 1;
       // @ts-ignore
