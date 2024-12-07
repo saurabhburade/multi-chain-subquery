@@ -104,19 +104,22 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         // @ts-ignore
         provider
       );
-      const eth = await oracleContract.getRate(
+      const eth = await oracleContract.populateTransaction.getRate(
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
         "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
         false
       );
-      const avail = await oracleContract.getRate(
+      const avail = await oracleContract.populateTransaction.getRate(
         "0xEeB4d8400AEefafC1B2953e0094134A887C76Bd8", // WETH
         "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
         false
       );
-
-      logger.info(`New ETH Price Feed::::::  ${eth.toString()}`);
-      logger.info(`New AVAIL Price Feed::::::  ${avail.toString()}`);
+      if (eth.data) {
+        logger.info(`New ETH Price Feed::::::  ${eth.data.toString()}`);
+      }
+      if (avail.data) {
+        logger.info(`New AVAIL Price Feed::::::  ${avail.data.toString()}`);
+      }
 
       // logger.info(`New ETHEREUM Price::::::  ${eth.toString()}`);
       // blockRecord = new Block(
