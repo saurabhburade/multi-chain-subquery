@@ -18,6 +18,8 @@ import {
   AccountEntity,
   DataSubmission,
   TransferEntity,
+  PriceFeed,
+  PriceFeedMinute,
 } from "../types";
 import { transferHandler, updateAccounts } from "../utils/balances";
 import { extractAuthor } from "../utils/author";
@@ -64,6 +66,8 @@ export interface CorrectSubstrateBlock extends SubstrateBlock {
 export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const blockHeader = block.block.header;
   let blockRecord = await Block.get(blockHeader.number.toString());
+  const blockDate = new Date(Number(block.timestamp) * 1000);
+  const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
       blockRecord = new Block(
@@ -82,15 +86,13 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       blockRecord.author = "";
       blockRecord.sessionId = 1;
       // @ts-ignore
-      const ethBlock = await (api as any).rpc.eth.blockNumber();
-
+      const priceFeed = await PriceFeedMinute.get(minuteId.toString());
+      logger.info("PRICE FEED FOUND::::", priceFeed);
       logger.info(
         "BLOCK SAVED ::::::::::::::::::" +
           block.block.header.number.toNumber() +
           "::::::::::::::::::" +
-          blockHeader.hash.toString() +
-          ":::::::: ETH BLOCK :: " +
-          ethBlock
+          blockHeader.hash.toString()
       );
 
       return await blockRecord.save();

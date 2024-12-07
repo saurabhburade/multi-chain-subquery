@@ -22,6 +22,26 @@ type PriceFeedMinute @entity {
   ethPrice: Float!
   availPrice: Float!
 }
+type PriceFeedHour @entity {
+  id: ID!
+
+  blockNumber: Int!
+
+  date: Date
+
+  ethPrice: Float!
+  availPrice: Float!
+}
+type PriceFeedDay @entity {
+  id: ID!
+
+  blockNumber: Int!
+
+  date: Date
+
+  ethPrice: Float!
+  availPrice: Float!
+}
 type SpecVersion @entity {
   id: ID! #specVersion
   blockHeight: BigInt!
