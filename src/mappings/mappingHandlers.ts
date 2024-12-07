@@ -89,9 +89,9 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
-      const httpData = await fetch("https://api.github.com/users/github");
+      const httpData = await fetch("https://api.github.com/users/github", {});
       const jsonData = await httpData.json();
-      logger.info(`httpData: ${JSON.stringify(jsonData)}`);
+      logger.info(`httpData: ${(jsonData as any).name}`);
       const provider = new ethers.providers.JsonRpcProvider(
         "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9"
       );
