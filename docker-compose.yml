@@ -63,7 +63,7 @@ services:
       - -f=app/ethereum.yaml
       - --allow-schema-migration
       - --unfinalized-blocks=false
-      - --workers=2
+      - --workers=3
 
 
     healthcheck:
