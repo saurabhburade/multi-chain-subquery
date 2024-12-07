@@ -35,7 +35,7 @@
     "@subql/types": "latest",
     "@subql/types-ethereum": "latest",
     "@types/node": "^17.0.21",
-    "node-fetch": "^3.3.2",
+    "@types/node-fetch": "latest",
     "pino": "^7.8.0",
     "ts-proto": "^1.112.1",
     "tslib": "^2.3.1"
