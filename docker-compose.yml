@@ -35,7 +35,6 @@ services:
       - -f=app/ethereum.yaml
       - --allow-schema-migration
       - --unfinalized-blocks=false
-      - --batch-size=1
       - --unsafe
 
     healthcheck:
@@ -62,7 +61,6 @@ services:
       - -f=app/avail.yaml
       - --allow-schema-migration
       - --unfinalized-blocks=false
-      - --batch-size=1
       - --unsafe
 
 

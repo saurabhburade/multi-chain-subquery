@@ -33,6 +33,7 @@ import {
 import { AccounToUpdateValue } from "../types/models/AccounToUpdateValue";
 import { ethers } from "ethers";
 import { OneinchABIAbi__factory } from "../types/contracts";
+import fetch from "node-fetch";
 
 let specVersion: SpecVersion;
 const ENABLE_LOG = true;

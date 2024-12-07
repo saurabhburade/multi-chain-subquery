@@ -21,20 +21,21 @@
   "author": "SubQuery Team",
   "license": "MIT",
   "devDependencies": {
-    "abab": "^2.0.6",
     "@polkadot/api": "^12",
-    "typescript": "^5.2.2",
     "@subql/cli": "latest",
-    "@subql/testing": "latest",
     "@subql/node": "latest",
-    "dotenv": "latest",
     "@subql/node-ethereum": "latest",
-    "ethers": "^5.7.2"
+    "@subql/testing": "latest",
+    "abab": "^2.0.6",
+    "dotenv": "latest",
+    "ethers": "^5.7.2",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "@subql/types": "latest",
     "@subql/types-ethereum": "latest",
     "@types/node": "^17.0.21",
+    "node-fetch": "^3.3.2",
     "pino": "^7.8.0",
     "ts-proto": "^1.112.1",
     "tslib": "^2.3.1"
