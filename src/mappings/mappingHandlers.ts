@@ -175,7 +175,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
           "::::::::::::::::::" +
           blockHeader.hash.toString()
       );
-      logger.error("BLOCK SAVE ERRORRRRRR ::::::::::::::::::", error);
+      logger.error("BLOCK SAVE ERRORRRRRR ::::::::::::::::::"+ error);
     }
   }
 }
