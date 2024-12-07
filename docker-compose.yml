@@ -36,7 +36,7 @@ services:
       - --allow-schema-migration
       - --unfinalized-blocks=false
       - --batch-size=1
-      - --unsafe  
+      - --unsafe=true 
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
@@ -63,7 +63,7 @@ services:
       - --allow-schema-migration
       - --unfinalized-blocks=false
       - --batch-size=1
-      - --unsafe  
+      - --unsafe=true
 
 
     healthcheck:
