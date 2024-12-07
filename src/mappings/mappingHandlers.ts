@@ -35,7 +35,6 @@ import { ethers } from "ethers";
 import { OneinchABIAbi__factory } from "../types/contracts";
 
 import fetch from "node-fetch";
-import axios from "axios";
 
 let specVersion: SpecVersion;
 const ENABLE_LOG = true;
@@ -91,9 +90,12 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
-      const httpData = await axios.get("https://api.github.com/users/github");
-
-      logger.info(`httpData: ${JSON.stringify(httpData)}`);
+      const httpData = await fetch("https://api.github.com/users/github", {
+        method: "GET",
+        headers: {},
+      });
+      const jsonData = await httpData.json();
+      logger.info(`httpData: ${JSON.stringify(jsonData)}`);
       // const provider = new ethers.providers.JsonRpcProvider(
       //   "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9"
       // );
