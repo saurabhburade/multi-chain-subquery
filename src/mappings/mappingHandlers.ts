@@ -88,66 +88,86 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
-      blockRecord = new Block(
-        blockHeader.number.toString(),
-        blockHeader.number.toNumber(),
-        blockHeader.hash.toString(),
-        block.timestamp,
-        blockHeader.parentHash.toString(),
-        blockHeader.stateRoot.toString(),
-        blockHeader.extrinsicsRoot.toString(),
-        block.specVersion,
-        block.block.extrinsics.length,
-        block.events.length
+      const oracleContract = OneinchABIAbi__factory.connect(
+        ORACLE_ADDRESS,
+        // @ts-ignore
+        api as any
+      );
+      const eth = await oracleContract.getRate(
+        "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
+        "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
+        false
+      );
+      const avail = await oracleContract.getRate(
+        "0xEeB4d8400AEefafC1B2953e0094134A887C76Bd8", // WETH
+        "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
+        false
       );
 
-      const ethBlock = getBlockForTimestamp(Number(block.timestamp.getTime()));
-      // const provider = new ethers.providers.JsonRpcProvider(
-      //   "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9"
-      // );
-      // const oracleContract = OneinchABIAbi__factory.connect(
-      //   ORACLE_ADDRESS,
-      //   provider
-      // );
-      // const eth = await oracleContract.getRate(
-      //   "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
-      //   "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
-      //   false
-      // );
-      // const avail = await oracleContract.getRate(
-      //   "0xEeB4d8400AEefafC1B2953e0094134A887C76Bd8", // WETH
-      //   "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
-      //   false
-      // );
-      // logger.info(
-      //   "PRICE FEED FOUND :::: ",
-      //   eth.toString(),
-      //   avail.toString(),
-      //   ethBlock
-      // );
-      logger.info(
-        "Expected ETHBLOCK :::: " + ethBlock + "::::::" + blockDate.toString()
-      );
-      blockRecord.author = "";
-      blockRecord.sessionId = 1;
-      // @ts-ignore
-      // const priceFeed = await PriceFeedMinute.get(minuteId.toString());
-      // const priceFeedBundle = await PriceFeed.get("1");
-      // logger.info(
-      //   "PRICE FEED FOUND::::",
-      //   priceFeed!.ethPrice.toString(),
-      //   priceFeedBundle!.ethPrice.toString()
-      // );
-      logger.info(
-        "BLOCK SAVED ::::::::::::::::::" +
-          block.block.header.number.toNumber() +
-          "::::::::::::::::::" +
-          blockHeader.hash.toString() +
-          ":::::MINUTE ::: " +
-          minuteId.toString()
-      );
+      logger.info(`New ETH Price Feed::::::  ${eth.toString()}`);
+      logger.info(`New AVAIL Price Feed::::::  ${avail.toString()}`);
 
-      return await blockRecord.save();
+      // logger.info(`New ETHEREUM Price::::::  ${eth.toString()}`);
+      // blockRecord = new Block(
+      //   blockHeader.number.toString(),
+      //   blockHeader.number.toNumber(),
+      //   blockHeader.hash.toString(),
+      //   block.timestamp,
+      //   blockHeader.parentHash.toString(),
+      //   blockHeader.stateRoot.toString(),
+      //   blockHeader.extrinsicsRoot.toString(),
+      //   block.specVersion,
+      //   block.block.extrinsics.length,
+      //   block.events.length
+      // );
+
+      // const ethBlock = getBlockForTimestamp(Number(block.timestamp.getTime()));
+      // // const provider = new ethers.providers.JsonRpcProvider(
+      // //   "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9"
+      // // );
+      // // const oracleContract = OneinchABIAbi__factory.connect(
+      // //   ORACLE_ADDRESS,
+      // //   provider
+      // // );
+      // // const eth = await oracleContract.getRate(
+      // //   "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
+      // //   "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
+      // //   false
+      // // );
+      // // const avail = await oracleContract.getRate(
+      // //   "0xEeB4d8400AEefafC1B2953e0094134A887C76Bd8", // WETH
+      // //   "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
+      // //   false
+      // // );
+      // // logger.info(
+      // //   "PRICE FEED FOUND :::: ",
+      // //   eth.toString(),
+      // //   avail.toString(),
+      // //   ethBlock
+      // // );
+      // logger.info(
+      //   "Expected ETHBLOCK :::: " + ethBlock + "::::::" + blockDate.toString()
+      // );
+      // blockRecord.author = "";
+      // blockRecord.sessionId = 1;
+      // // @ts-ignore
+      // // const priceFeed = await PriceFeedMinute.get(minuteId.toString());
+      // // const priceFeedBundle = await PriceFeed.get("1");
+      // // logger.info(
+      // //   "PRICE FEED FOUND::::",
+      // //   priceFeed!.ethPrice.toString(),
+      // //   priceFeedBundle!.ethPrice.toString()
+      // // );
+      // logger.info(
+      //   "BLOCK SAVED ::::::::::::::::::" +
+      //     block.block.header.number.toNumber() +
+      //     "::::::::::::::::::" +
+      //     blockHeader.hash.toString() +
+      //     ":::::MINUTE ::: " +
+      //     minuteId.toString()
+      // );
+
+      // return await blockRecord.save();
     } catch (error) {
       logger.error(
         "BLOCK SAVE ERRORRRRRR ::::::::::::::::::" +
