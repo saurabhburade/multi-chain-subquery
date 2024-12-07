@@ -172,8 +172,14 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
           `RAW ETH Price Feed::::::  ${JSON.stringify(ethResultRaw)}`
         );
       }
-      const decodedEth = ife.decodeFunctionResult("getRate", ethResultRaw);
-      const decodedAvail = ife.decodeFunctionResult("getRate", availResultRaw);
+      const decodedEth = ife.decodeFunctionResult(
+        "getRate",
+        ethResultRaw.result
+      );
+      const decodedAvail = ife.decodeFunctionResult(
+        "getRate",
+        availResultRaw.result
+      );
       // ife.decodeFunctionData();
       // const eth = await oracleContract.populateTransaction.getRate(
       //   "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
