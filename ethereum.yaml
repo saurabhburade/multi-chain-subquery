@@ -22,35 +22,6 @@ network:
   chainId: '1'
   endpoint:
     - https://ethereum.rpc.subquery.network/public
-    - https://eth.llamarpc.com
-    - https://eth-mainnet.public.blastapi.io
-    - https://api.zan.top/eth-mainnet
-    - https://ethereum.blockpi.network/v1/rpc/public
-    - wss://ethereum-rpc.publicnode.com
-    - wss://ethereum.callstaticrpc.com
-    - https://ethereum-rpc.publicnode.com
-    - https://eth-mainnet.public.blastapi.io
-    - https://rpc.mevblocker.io/fast
-    - https://rpc.mevblocker.io/fullprivacy
-    - https://eth-pokt.nodies.app
-    - https://rpc.mevblocker.io
-    - https://rpc.mevblocker.io/noreverts
-    - wss://mainnet.gateway.tenderly.co
-    - wss://eth.drpc.org
-    - https://rpc.ankr.com/eth
-    - https://eth.drpc.org
-    - wss://ws-rpc.graffiti.farm
-    - https://eth.blockrazor.xyz
-    - https://endpoints.omniatech.io/v1/eth/mainnet/public
-    - https://rpc.payload.de
-    - https://rpc.eth.gateway.fm
-    - https://gateway.tenderly.co/public/mainnet
-    - https://mainnet.gateway.tenderly.co
-    - https://eth1.lava.build
-    - https://cloudflare-eth.com
-    - https://core.gashawk.io/rpc
-    - https://eth.public-rpc.com
-
 
 dataSources:
   - kind: ethereum/Runtime
