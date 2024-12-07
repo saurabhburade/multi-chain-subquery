@@ -88,10 +88,13 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
+      const provider = new ethers.providers.JsonRpcProvider(
+        "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9"
+      );
       const oracleContract = OneinchABIAbi__factory.connect(
         ORACLE_ADDRESS,
         // @ts-ignore
-        api as any
+        provider
       );
       const eth = await oracleContract.getRate(
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
@@ -175,7 +178,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
           "::::::::::::::::::" +
           blockHeader.hash.toString()
       );
-      logger.error("BLOCK SAVE ERRORRRRRR ::::::::::::::::::"+ error);
+      logger.error("BLOCK SAVE ERRORRRRRR ::::::::::::::::::" + error);
     }
   }
 }
