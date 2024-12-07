@@ -17,32 +17,33 @@ services:
       timeout: 5s
       retries: 5
 
-  # subquery-node-avail:
-  #   image: subquerynetwork/subql-node-substrate:latest
-  #   restart: unless-stopped
-  #   environment:
-  #     DB_USER: postgres
-  #     DB_PASS: postgres
-  #     DB_DATABASE: postgres
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #   volumes:
-  #     - ./:/app
-  #   command:
-  #     - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
-  #     - --multi-chain
-  #     - --db-schema=multi-chain
-  #     - --disable-historical
-  #     - -f=app/avail.yaml
-  #     - --allow-schema-migration
-  #     - --unfinalized-blocks=false
-  #     - --workers=2
+  subquery-node-avail:
+    image: subquerynetwork/subql-node-substrate:latest
+    restart: unless-stopped
+    environment:
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_DATABASE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+    volumes:
+      - ./:/app
+    command:
+      - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
+      - --multi-chain
+      - --db-schema=multi-chain
+      - --disable-historical
+      - -f=app/avail.yaml
+      - --allow-schema-migration
+      - --unfinalized-blocks=false
+      - --batch-size=30
 
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
-  #     interval: 3s
-  #     timeout: 5s
-  #     retries: 10
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
 
   subquery-node-evm:
     image: subquerynetwork/subql-node-ethereum:latest
@@ -63,8 +64,7 @@ services:
       - -f=app/ethereum.yaml
       - --allow-schema-migration
       - --unfinalized-blocks=false
-      - --workers=3
-
+      - --batch-size=30
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
