@@ -22,10 +22,10 @@ network:
   chainId: '1'
   endpoint:
     - wss://lb.drpc.org/ogws?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9
-    - wss://eth-mainnet.blastapi.io/01687f31-35ee-4deb-9f72-b92832823776
-    - wss://go.getblock.io/e2f06fb4021145279db8b0a8bda12714
-    - https://mainnet.infura.io/v3/e8737ca352c04bf4b4af34585fb61c07
-    - https://eth.blockscout.com/api/eth-rpc
+    # - wss://eth-mainnet.blastapi.io/01687f31-35ee-4deb-9f72-b92832823776
+    # - wss://go.getblock.io/e2f06fb4021145279db8b0a8bda12714
+    # - https://mainnet.infura.io/v3/e8737ca352c04bf4b4af34585fb61c07
+    # - https://eth.blockscout.com/api/eth-rpc
 
 
 dataSources:
