@@ -167,7 +167,11 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       );
       const ethResultRaw = await rpcDataEth.json();
       const availResultRaw = await rpcDataAvail.json();
-
+      if (ethResultRaw) {
+        logger.info(
+          `RAW ETH Price Feed::::::  ${JSON.stringify(ethResultRaw)}`
+        );
+      }
       const decodedEth = ife.decodeFunctionResult("getRate", ethResultRaw);
       const decodedAvail = ife.decodeFunctionResult("getRate", availResultRaw);
       // ife.decodeFunctionData();
