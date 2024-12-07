@@ -6,7 +6,7 @@ import { PriceFeed, PriceFeedMinute } from "../types";
 const ORACLE_ADDRESS = "0x0AdDd25a91563696D8567Df78D5A01C9a991F9B8";
 
 export async function handleEthBlock(block: EthereumBlock): Promise<void> {
-  logger.info(`New BLOCK ETHEREUM ::::::  ${block.number.toString()}`);
+  // logger.info(`New BLOCK ETHEREUM ::::::  ${block.number.toString()}`);
   // logger.info(`New BLOCK ETHEREUM time::::::  ${block.timestamp.toString()}`);
   // Do something with each block handler here
   //   const provider = new ethers.providers.JsonRpcProvider(
@@ -43,10 +43,10 @@ export async function handleEthBlock(block: EthereumBlock): Promise<void> {
   priceFeed.blockNumber = block.number;
 
   priceFeed.date = new Date(Number(block.timestamp) * 1000);
-  logger.info(`New ETH Price Feed::::::  ${priceFeed.ethPrice.toString()}`);
-  logger.info(`New AVAIL Price Feed::::::  ${priceFeed.availPrice.toString()}`);
+  // logger.info(`New ETH Price Feed::::::  ${priceFeed.ethPrice.toString()}`);
+  // logger.info(`New AVAIL Price Feed::::::  ${priceFeed.availPrice.toString()}`);
 
-  logger.info(`New ETHEREUM Price::::::  ${eth.toString()}`);
+  // logger.info(`New ETHEREUM Price::::::  ${eth.toString()}`);
   await handleOraclePricePerMinute(block);
   return await priceFeed.save();
 }
@@ -86,12 +86,12 @@ export async function handleOraclePricePerMinute(
   priceFeedMinute.blockNumber = block.number;
 
   priceFeedMinute.date = new Date(Number(block.timestamp) * 1000);
-  logger.info(
-    `New ETH Price Feed Minute::::::  ${priceFeedMinute.ethPrice.toString()} :: ID:: ${minuteId} :: AT:: ${blockDate}`
-  );
-  logger.info(
-    `New AVAIL Price Feed Minute::::::  ${priceFeedMinute.availPrice.toString()} :: ID:: ${minuteId} :: AT:: ${blockDate}`
-  );
+  // logger.info(
+  //   `New ETH Price Feed Minute::::::  ${priceFeedMinute.ethPrice.toString()} :: ID:: ${minuteId} :: AT:: ${blockDate}`
+  // );
+  // logger.info(
+  //   `New AVAIL Price Feed Minute::::::  ${priceFeedMinute.availPrice.toString()} :: ID:: ${minuteId} :: AT:: ${blockDate}`
+  // );
 
   return await priceFeedMinute.save();
 }

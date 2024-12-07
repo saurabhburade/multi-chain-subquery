@@ -79,28 +79,18 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         block.events.length
       );
 
-      // blockRecord = Block.create({
-      //   id: blockHeader.number.toString(),
-      //   number: blockHeader.number.toNumber(),
-      //   hash: blockHeader.hash.toString(),
-      //   timestamp: block.timestamp,
-      //   parentHash: blockHeader.parentHash.toString(),
-      //   stateRoot: blockHeader.stateRoot.toString(),
-      //   extrinsicsRoot: blockHeader.extrinsicsRoot.toString(),
-      //   runtimeVersion: block.specVersion,
-      //   nbExtrinsics: block.block.extrinsics.length,
-      //   nbEvents: block.events.length,
-      //   author: "",
-      //   sessionId: 1,
-      // });
       blockRecord.author = "";
       blockRecord.sessionId = 1;
+      // @ts-ignore
+      const ethBlock = await (api as any).rpc.eth.blockNumber();
 
       logger.info(
         "BLOCK SAVED ::::::::::::::::::" +
           block.block.header.number.toNumber() +
           "::::::::::::::::::" +
-          blockHeader.hash.toString()
+          blockHeader.hash.toString() +
+          ":::::::: ETH BLOCK :: " +
+          ethBlock
       );
 
       return await blockRecord.save();

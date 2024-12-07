@@ -3,5 +3,5 @@ query:
   name: '@subql/query'
   version: '*'
 projects:
-  # - avail.yaml
+  - avail.yaml
   - ethereum.yaml
