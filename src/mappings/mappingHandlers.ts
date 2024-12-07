@@ -105,11 +105,12 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9"
       );
       const ethBlock = getBlockForTimestamp(Number(block.timestamp.getTime()));
-      const oracleContract = OneinchABIAbi__factory.connect(
+      const oracleContract = new ethers.Contract(
         ORACLE_ADDRESS,
+        OneinchABIAbi__factory.abi,
         provider
       );
-      const eth = await oracleContract.getRate(
+      const eth = await oracleContract.functions.getRate(
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
         "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
         false,
