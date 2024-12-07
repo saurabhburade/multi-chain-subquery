@@ -22,6 +22,10 @@ network:
   chainId: '1'
   endpoint:
     - https://eth.public-rpc.com
+    - wss://ethereum-rpc.publicnode.com
+    - https://ethereum-rpc.publicnode.com
+    - https://1rpc.io/eth
+
 
 
 dataSources:
