@@ -21,8 +21,7 @@ options:
 network:
   chainId: '1'
   endpoint:
-    - https://eth.rpc.hypersync.xyz/
-    - https://1.rpc.hypersync.xyz
+    - wss://lb.drpc.org/ogws?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9
 
 
 
