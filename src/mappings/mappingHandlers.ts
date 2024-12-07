@@ -66,7 +66,7 @@ export interface CorrectSubstrateBlock extends SubstrateBlock {
 export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const blockHeader = block.block.header;
   let blockRecord = await Block.get(blockHeader.number.toString());
-  const blockDate = new Date(Number(block.timestamp) * 1000);
+  const blockDate = new Date(Number(block.timestamp.getTime()));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
