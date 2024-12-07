@@ -87,7 +87,8 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       blockRecord.sessionId = 1;
       // @ts-ignore
       const priceFeed = await PriceFeedMinute.get(minuteId.toString());
-      logger.info("PRICE FEED FOUND::::", priceFeed);
+      const priceFeedBundle = await PriceFeed.get("1");
+      logger.info("PRICE FEED FOUND::::", priceFeed, priceFeedBundle);
       logger.info(
         "BLOCK SAVED ::::::::::::::::::" +
           block.block.header.number.toNumber() +
