@@ -121,7 +121,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         false,
       ]);
       // @ts-ignore
-      const blockNumber = await (api as any).rpc.eth.blockNumber();
+      const blockNumber = await (api as any).rpc.eth.blockNumber;
       logger.info(` Expected ETH BLOCK::::::  ${blockNumber}`);
       const rpcDataEth = await fetch(
         "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
