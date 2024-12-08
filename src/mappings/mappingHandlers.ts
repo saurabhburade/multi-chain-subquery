@@ -126,7 +126,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       // logger.info(` Expected ETH BLOCK::::::  ${JSON.stringify(blockNumber)}`);
       const blockNumberApi = await fetch(
         `https://coins.llama.fi/block/ethereum/${Number(
-          block.timestamp.getTime()
+          block.timestamp.getTime() / 1000
         )}`,
         {
           method: "GET",
