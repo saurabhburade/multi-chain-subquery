@@ -15,7 +15,7 @@ export async function handleNewPriceMinute({
   ethDate: Date;
   availDate: Date;
 }): Promise<PriceFeedMinute> {
-  const blockDate = new Date(Number(availDate) * 1000);
+  const blockDate = new Date(Number(availDate));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   let priceFeedMinute = await PriceFeedMinute.get(minuteId.toString());
   if (priceFeedMinute === undefined || priceFeedMinute === null) {
