@@ -91,7 +91,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
-      const priceFeedOfGivenMinute = PriceFeedMinute.get(minuteId.toString());
+      const priceFeedOfGivenMinute = await PriceFeedMinute.get(minuteId.toString());
       if (
         priceFeedOfGivenMinute === undefined ||
         priceFeedOfGivenMinute === null
