@@ -120,9 +120,22 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
         false,
       ]);
+      //coins.llama.fi/block/ethereum/1658171864
       // @ts-ignore
-      const blockNumber = await (api as any).rpc.eth.blockNumber;
-      logger.info(` Expected ETH BLOCK::::::  ${JSON.stringify(blockNumber)}`);
+      // https: const blockNumber = await (api as any).rpc.eth.blockNumber;
+      // logger.info(` Expected ETH BLOCK::::::  ${JSON.stringify(blockNumber)}`);
+      const blockNumberApi = await fetch(
+        `https://coins.llama.fi/block/ethereum/${Number(
+          block.timestamp.getTime()
+        )}`,
+        {
+          method: "GET",
+        }
+      );
+      const ethBlockContext = await blockNumberApi.json();
+      logger.info(
+        `Expected ETH BLOCK::::::  ${JSON.stringify(ethBlockContext)}`
+      );
       const rpcDataEth = await fetch(
         "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
         {
@@ -139,10 +152,6 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
               },
             ],
           }),
-          //     {
-          //     method: 'eth_call',
-          //     data: '0x802431fb000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000000000',
-          //   },
         }
       );
       const rpcDataAvail = await fetch(
@@ -161,10 +170,6 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
               },
             ],
           }),
-          //     {
-          //     method: 'eth_call',
-          //     data: '0x802431fb000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000000000',
-          //   },
         }
       );
       const ethResultRaw = await rpcDataEth.json();
