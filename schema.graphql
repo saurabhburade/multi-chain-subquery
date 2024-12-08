@@ -14,13 +14,13 @@ type PriceFeed @entity {
 }
 type PriceFeedMinute @entity {
   id: ID!
-
-  blockNumber: Int!
-
   date: Date
-
   ethPrice: Float!
   availPrice: Float!
+  ethBlock: Int!
+  availBlock: Int!
+  ethDate: Date
+  availDate: Date
 }
 type PriceFeedHour @entity {
   id: ID!
