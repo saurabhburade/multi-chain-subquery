@@ -134,7 +134,11 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       );
       const ethBlockContext = await blockNumberApi.json();
       logger.info(
-        `Expected ETH BLOCK::::::  ${JSON.stringify(ethBlockContext)}`
+        `Expected ETH BLOCK::::::  ${JSON.stringify(
+          ethBlockContext
+        )} AT ${Number(
+          block.timestamp.getTime() / 1000
+        )} ::: Date :: ${blockDate}`
       );
       const rpcDataEth = await fetch(
         "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
@@ -150,6 +154,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
                 to: ORACLE_ADDRESS,
                 data: encodedEth,
               },
+              `0x${ethBlockContext.height.toString(16)}`,
             ],
           }),
         }
@@ -168,6 +173,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
                 to: ORACLE_ADDRESS,
                 data: encodedAvail,
               },
+              `0x${ethBlockContext.height.toString(16)}`,
             ],
           }),
         }
