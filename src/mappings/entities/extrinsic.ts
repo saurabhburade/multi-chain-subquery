@@ -47,22 +47,22 @@ export async function handleExtrinsics(
       block,
     };
     const extraData = extIdToDetails[idx];
-    calls.push(
-      handleCall(
-        `${blockNumberString}-${idx}`,
-        substrateExtrinsic,
-        extraData,
-        priceFeed
-      )
-    );
-    if (isDataSubmission)
-      daSubmissions.push(
-        handleDataSubmission(
-          `${blockNumberString}-${idx}`,
-          substrateExtrinsic,
-          extraData
-        )
-      );
+    // calls.push(
+    //   handleCall(
+    //     `${blockNumberString}-${idx}`,
+    //     substrateExtrinsic,
+    //     extraData,
+    //     priceFeed
+    //   )
+    // );
+    // if (isDataSubmission)
+    //   daSubmissions.push(
+    //     handleDataSubmission(
+    //       `${blockNumberString}-${idx}`,
+    //       substrateExtrinsic,
+    //       extraData
+    //     )
+    //   );
   });
 }
 
