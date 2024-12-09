@@ -95,6 +95,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         block,
       });
       logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
+      await blockHandler(block, savedPrice);
     } catch (error) {
       logger.error(
         "handleBlock  ERRORRRRRR ::::::::::::::::::" +
@@ -109,12 +110,29 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
 
 export const blockHandler = async (
   block: CorrectSubstrateBlock,
-  specVersion: SpecVersion
+  priceFeed: PriceFeedMinute
 ): Promise<void> => {
   try {
     const blockHeader = block.block.header;
     let blockRecord = await Block.get(blockHeader.number.toString());
     if (!blockRecord) {
+      let fees = {
+        fee: 0,
+        feesRounded: 0,
+      };
+      block.events.forEach((event) => {
+        const key = `${event.event.section}.${event.event.method}`;
+        if (key === "transactionPayment.TransactionFeePaid") {
+          const parsedfee = getFeesFromEvent(
+            event.event.data.toJSON() as any[]
+          );
+          fees.fee += Number(parsedfee.fee);
+          fees.feesRounded += Number(parsedfee.feeRounded);
+        }
+      });
+      logger.info(
+        `BLOCK HANDLE :::::::::::::::::: FEES ${JSON.stringify(fees)}`
+      );
       blockRecord = Block.create({
         id: blockHeader.number.toString(),
         number: blockHeader.number.toNumber(),
@@ -126,6 +144,12 @@ export const blockHandler = async (
         runtimeVersion: block.specVersion,
         nbExtrinsics: block.block.extrinsics.length,
         nbEvents: block.events.length,
+        availPrice: priceFeed.availPrice,
+        blockFee: fees.feesRounded,
+        ethBlock: priceFeed.ethBlock,
+        ethPrice: priceFeed.ethPrice,
+        author: "",
+        sessionId: 1,
       });
       logger.info(
         "BLOCK SAVED ::::::::::::::::::" + block.block.header.number.toNumber()
@@ -150,77 +174,78 @@ export const blockHandler = async (
   }
 };
 
-export function handleCall(
-  idx: string,
-  extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
-  extraDetails:
-    | {
-        nbEvents: number;
-        success?: boolean | undefined;
-        fee?: string | undefined;
-        feeRounded?: number | undefined;
-      }
-    | undefined
-): Extrinsic {
-  try {
-    const block = extrinsic.block as CorrectSubstrateBlock;
-    const ext = extrinsic.extrinsic;
-    const methodData = ext.method;
-    const key = `${methodData.section}_${methodData.method}`;
-    const argsValue =
-      key === "dataAvailability_submitData"
-        ? // We handle the block differently
-          methodData.args.map((a, i) =>
-            i === 0 ? handleDaSubmission(a) : a.toString()
-          )
-        : key === "vector_execute"
-        ? // We handle the parameter of index 1 of vector execute differently
-          methodData.args.map((a, i) =>
-            i === 1 ? handleVectorExecuteMessage(a) : a.toString()
-          )
-        : key === "vector_sendMessage"
-        ? // We handle the parameter of index 0 of vector send message differently
-          methodData.args.map((a, i) =>
-            i === 0 ? handleVectorSendMessage(a) : a.toString()
-          )
-        : methodData.args.map((a) => a.toString());
+// export function handleCall(
+//   idx: string,
+//   extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
+//   extraDetails:
+//     | {
+//         nbEvents: number;
+//         success?: boolean | undefined;
+//         fee?: string | undefined;
+//         feeRounded?: number | undefined;
+//       }
+//     | undefined
+// ): Extrinsic {
+//   try {
+//     const block = extrinsic.block as CorrectSubstrateBlock;
+//     const ext = extrinsic.extrinsic;
+//     const methodData = ext.method;
 
-    const extrinsicRecord = new Extrinsic(
-      idx,
-      block.block.header.number.toString(),
-      ext.hash.toString(),
-      methodData.section,
-      methodData.method,
-      block.block.header.number.toBigInt(),
-      extraDetails?.success || false,
-      ext.isSigned,
-      extrinsic.idx,
-      ext.hash.toString(),
-      block.timestamp,
-      // descriptionRecord.id,
-      ext.signer.toString(),
-      ext.signature.toString(),
-      ext.nonce.toNumber(),
-      methodData.meta.args.map((a) => a.name.toString()),
-      argsValue,
-      extraDetails?.nbEvents || 0
-    );
-    extrinsicRecord.fees = extraDetails?.fee ? extraDetails?.fee : "0";
-    extrinsicRecord.feesRounded = extraDetails?.feeRounded
-      ? extraDetails?.feeRounded
-      : 0;
-    return extrinsicRecord;
-  } catch (err: any) {
-    logger.error(
-      `record extrinsic error at : hash(${
-        extrinsic.extrinsic.hash
-      }) and block nb ${extrinsic.block.block.header.number.toNumber()}`
-    );
-    logger.error("record extrinsic error detail:" + err);
-    if (err.sql) logger.error("record extrinsic error sql detail:" + err.sql);
-    throw err;
-  }
-}
+//     const key = `${methodData.section}_${methodData.method}`;
+//     const argsValue =
+//       key === "dataAvailability_submitData"
+//         ? // We handle the block differently
+//           methodData.args.map((a, i) =>
+//             i === 0 ? handleDaSubmission(a) : a.toString()
+//           )
+//         : key === "vector_execute"
+//         ? // We handle the parameter of index 1 of vector execute differently
+//           methodData.args.map((a, i) =>
+//             i === 1 ? handleVectorExecuteMessage(a) : a.toString()
+//           )
+//         : key === "vector_sendMessage"
+//         ? // We handle the parameter of index 0 of vector send message differently
+//           methodData.args.map((a, i) =>
+//             i === 0 ? handleVectorSendMessage(a) : a.toString()
+//           )
+//         : methodData.args.map((a) => a.toString());
+
+//     const extrinsicRecord = new Extrinsic(
+//       idx,
+//       block.block.header.number.toString(),
+//       ext.hash.toString(),
+//       methodData.section,
+//       methodData.method,
+//       block.block.header.number.toBigInt(),
+//       extraDetails?.success || false,
+//       ext.isSigned,
+//       extrinsic.idx,
+//       ext.hash.toString(),
+//       block.timestamp,
+//       // descriptionRecord.id,
+//       ext.signer.toString(),
+//       ext.signature.toString(),
+//       ext.nonce.toNumber(),
+//       methodData.meta.args.map((a) => a.name.toString()),
+//       argsValue,
+//       extraDetails?.nbEvents || 0,
+//     );
+//     extrinsicRecord.fees = extraDetails?.fee ? extraDetails?.fee : "0";
+//     extrinsicRecord.feesRounded = extraDetails?.feeRounded
+//       ? extraDetails?.feeRounded
+//       : 0;
+//     return extrinsicRecord;
+//   } catch (err: any) {
+//     logger.error(
+//       `record extrinsic error at : hash(${
+//         extrinsic.extrinsic.hash
+//       }) and block nb ${extrinsic.block.block.header.number.toNumber()}`
+//     );
+//     logger.error("record extrinsic error detail:" + err);
+//     if (err.sql) logger.error("record extrinsic error sql detail:" + err.sql);
+//     throw err;
+//   }
+// }
 
 export function handleEvent(
   blockNumber: string,
