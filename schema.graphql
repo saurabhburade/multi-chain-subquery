@@ -206,6 +206,52 @@ type CollectiveData @entity {
   avgAvailPrice: Float
   avgEthPrice: Float
 }
+type CollectiveDayData @entity {
+  id: ID!
+  totalByteSize: Int! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesAvail: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  timestampStart: Date! @index
+  startBlock: Float
+  endBlock: Float
+  avgAvailPrice: Float
+  avgEthPrice: Float
+  prevDayData: CollectiveDayData
+}
+type CollectiveHourData @entity {
+  id: ID!
+  totalByteSize: Int! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesAvail: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampStart: Date! @index
+  timestampLast: Date! @index
+  startBlock: Float
+  endBlock: Float
+  avgAvailPrice: Float
+  avgEthPrice: Float
+  prevHourData: CollectiveHourData
+}
 
 type AccounToUpdateValue @entity {
   id: ID!
