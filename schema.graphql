@@ -184,6 +184,7 @@ type DataSubmission @entity {
   signer: String! @index
   fees: Float
   feesPerMb: Float @index
+  priceFeed: PriceFeedMinute
 }
 
 type AccounToUpdateValue @entity {
