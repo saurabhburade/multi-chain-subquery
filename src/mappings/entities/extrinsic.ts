@@ -84,23 +84,23 @@ export function handleCall(
     const ext = extrinsic.extrinsic;
     const methodData = ext.method;
     const key = `${methodData.section}_${methodData.method}`;
-    const argsValue =
-      key === "dataAvailability_submitData"
-        ? // We handle the block differently
-          methodData.args.map((a, i) =>
-            i === 0 ? handleDaSubmissionData(a) : a.toString()
-          )
-        : key === "vector_execute"
-        ? // We handle the parameter of index 1 of vector execute differently
-          methodData.args.map((a, i) =>
-            i === 1 ? handleVectorExecuteMessage(a) : a.toString()
-          )
-        : key === "vector_sendMessage"
-        ? // We handle the parameter of index 0 of vector send message differently
-          methodData.args.map((a, i) =>
-            i === 0 ? handleVectorSendMessage(a) : a.toString()
-          )
-        : methodData.args.map((a) => a.toString());
+    // const argsValue =
+    //   key === "dataAvailability_submitData"
+    //     ? // We handle the block differently
+    //       methodData.args.map((a, i) =>
+    //         i === 0 ? handleDaSubmissionData(a) : a.toString()
+    //       )
+    //     : key === "vector_execute"
+    //     ? // We handle the parameter of index 1 of vector execute differently
+    //       methodData.args.map((a, i) =>
+    //         i === 1 ? handleVectorExecuteMessage(a) : a.toString()
+    //       )
+    //     : key === "vector_sendMessage"
+    //     ? // We handle the parameter of index 0 of vector send message differently
+    //       methodData.args.map((a, i) =>
+    //         i === 0 ? handleVectorSendMessage(a) : a.toString()
+    //       )
+    //     : methodData.args.map((a) => a.toString());
 
     const extrinsicRecord = Extrinsic.create({
       id: ext.hash.toString(), // txHash - Transaction hash
@@ -108,7 +108,7 @@ export function handleCall(
       txHash: ext.hash.toString(), // txHash - Transaction hash
       module: methodData.section, // module - The module the extrinsic belongs to
       call: methodData.method, // call - The method of the extrinsic
-      blockHeight: BigInt(1), // blockHeight - The block's height as a BigInt
+      blockHeight: block.block.header.number.toBigInt(), // blockHeight - The block's height as a BigInt
       success: extraDetails?.success || false, // success - Whether the extrinsic was successful
       isSigned: ext.isSigned, // isSigned - Whether the extrinsic is signed
       extrinsicIndex: extrinsic.idx, // extrinsicIndex - Index of the extrinsic in the block
