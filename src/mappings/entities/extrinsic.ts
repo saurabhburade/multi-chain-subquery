@@ -56,12 +56,10 @@ export async function handleExtrinsics(
     );
 
     if (isDataSubmission)
-      daSubmissions.push(
-        handleDataSubmission(
-          `${blockNumberString}-${idx}`,
-          substrateExtrinsic,
-          extraData
-        )
+      handleDataSubmission(
+        `${blockNumberString}-${idx}`,
+        substrateExtrinsic,
+        extraData
       );
   });
 }
@@ -185,7 +183,7 @@ export function handleDataSubmission(
     logger.info(
       `Saved DataSubmission - ${JSON.stringify(dataSubmissionRecord)}`
     );
-
+    dataSubmissionRecord.save();
     return dataSubmissionRecord;
   } catch (error) {
     logger.error("handleDataSubmission error detail:" + error);
