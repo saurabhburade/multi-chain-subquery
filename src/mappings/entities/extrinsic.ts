@@ -47,14 +47,14 @@ export async function handleExtrinsics(
       block,
     };
     const extraData = extIdToDetails[idx];
-    // calls.push(
-    //   handleCall(
-    //     `${blockNumberString}-${idx}`,
-    //     substrateExtrinsic,
-    //     extraData,
-    //     priceFeed
-    //   )
-    // );
+    calls.push(
+      handleCall(
+        `${blockNumberString}-${idx}`,
+        substrateExtrinsic,
+        extraData,
+        priceFeed
+      )
+    );
     // if (isDataSubmission)
     //   daSubmissions.push(
     //     handleDataSubmission(
@@ -102,51 +102,28 @@ export function handleCall(
           )
         : methodData.args.map((a) => a.toString());
 
-    const extrinsicRecord = Extrinsic.create(
-      //   idx
-      //   block.block.header.number.toString(),
-      //   ext.hash.toString(),
-      //   methodData.section,
-      //   methodData.method,
-      //   block.block.header.number.toBigInt(),
-      //   extraDetails?.success || false,
-      //   ext.isSigned,
-      //   extrinsic.idx,
-      //   ext.hash.toString(),
-      //   block.timestamp,
-      //   // descriptionRecord.id,
-      //   ext.signer.toString(),
-      //   ext.signature.toString(),
-      //   ext.nonce.toNumber(),
-      //   methodData.meta.args.map((a) => a.name.toString()),
-      //   argsValue,
-      //   extraDetails?.nbEvents || 0,
-      //   priceFeed.ethPrice,
-      //   priceFeed.availPrice,
-      //   priceFeed.ethBlock
-      {
-        id: ext.hash.toString(), // txHash - Transaction hash
-        blockId: block.block.header.number.toString(), // blockId - Block height/number
-        txHash: ext.hash.toString(), // txHash - Transaction hash
-        module: methodData.section, // module - The module the extrinsic belongs to
-        call: methodData.method, // call - The method of the extrinsic
-        blockHeight: BigInt(block.block.header.number.toString()), // blockHeight - The block's height as a BigInt
-        success: extraDetails?.success || false, // success - Whether the extrinsic was successful
-        isSigned: ext.isSigned, // isSigned - Whether the extrinsic is signed
-        extrinsicIndex: extrinsic.idx, // extrinsicIndex - Index of the extrinsic in the block
-        hash: ext.hash.toString(), // hash - The hash of the extrinsic
-        timestamp: block.timestamp, // timestamp - The timestamp when the block was produced
-        signer: ext.signer.toString(), // signer - The account that signed the extrinsic
-        signature: ext.signature.toString(), // signature - The signature of the extrinsic
-        nonce: ext.nonce.toNumber(), // nonce - The nonce of the extrinsic
-        argsName: methodData.meta.args.map((a) => a.name.toString()), // argsName - List of argument names in the extrinsic method
-        argsValue: [], // argsValue - List of argument values passed to the extrinsic
-        nbEvents: extraDetails?.nbEvents || 0, // nbEvents - The number of events related to the extrinsic
-        ethPrice: priceFeed.ethPrice, // ethPrice - Current Ethereum price (or some other token's price)
-        availPrice: priceFeed.availPrice, // availPrice - Availability price (if applicable)
-        ethBlock: priceFeed.ethBlock, // ethBlock - The block number from Ethereum (or relevant chain)
-      }
-    );
+    const extrinsicRecord = Extrinsic.create({
+      id: ext.hash.toString(), // txHash - Transaction hash
+      blockId: block.block.header.number.toString(), // blockId - Block height/number
+      txHash: ext.hash.toString(), // txHash - Transaction hash
+      module: methodData.section, // module - The module the extrinsic belongs to
+      call: methodData.method, // call - The method of the extrinsic
+      blockHeight: BigInt(1), // blockHeight - The block's height as a BigInt
+      success: extraDetails?.success || false, // success - Whether the extrinsic was successful
+      isSigned: ext.isSigned, // isSigned - Whether the extrinsic is signed
+      extrinsicIndex: extrinsic.idx, // extrinsicIndex - Index of the extrinsic in the block
+      hash: ext.hash.toString(), // hash - The hash of the extrinsic
+      timestamp: block.timestamp, // timestamp - The timestamp when the block was produced
+      signer: ext.signer.toString(), // signer - The account that signed the extrinsic
+      signature: ext.signature.toString(), // signature - The signature of the extrinsic
+      nonce: ext.nonce.toNumber(), // nonce - The nonce of the extrinsic
+      argsName: methodData.meta.args.map((a) => a.name.toString()), // argsName - List of argument names in the extrinsic method
+      argsValue: [], // argsValue - List of argument values passed to the extrinsic
+      nbEvents: extraDetails?.nbEvents || 0, // nbEvents - The number of events related to the extrinsic
+      ethPrice: priceFeed.ethPrice, // ethPrice - Current Ethereum price (or some other token's price)
+      availPrice: priceFeed.availPrice, // availPrice - Availability price (if applicable)
+      ethBlock: priceFeed.ethBlock, // ethBlock - The block number from Ethereum (or relevant chain)
+    });
 
     extrinsicRecord.fees = extraDetails?.fee ? extraDetails?.fee : "0";
     extrinsicRecord.feesRounded = extraDetails?.feeRounded
