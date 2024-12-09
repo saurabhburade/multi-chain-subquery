@@ -1,5 +1,6 @@
 import { SubstrateExtrinsic } from "@subql/types";
 import {
+  CollectiveData,
   DataSubmission,
   Extrinsic,
   PriceFeedMinute,
@@ -33,6 +34,38 @@ export async function handleExtrinsics(
       feeRounded?: number;
     };
   } = {};
+  let collectiveData = await CollectiveData.get("1");
+  if (collectiveData === undefined || collectiveData === null) {
+    collectiveData = CollectiveData.create({
+      id: "1",
+      timestampLast: block.timestamp,
+      totalByteSize: 0,
+      avgAvailPrice: priceFeed.availPrice,
+      avgEthPrice: priceFeed.ethPrice,
+      lastPriceFeedId: priceFeed.id,
+      totalBlocksCount: 0,
+      totalDataAccountsCount: 0,
+      totalDataSubmissionCount: 0,
+      totalDataBlocksCount: 0,
+      totalExtrinsicCount: 0,
+      totalFees: 0,
+      totalFeesAvail: 0,
+      totalFeesUSD: 0,
+      totalTransferCount: 0,
+      totalDAFees: 0,
+      totalDAFeesUSD: 0,
+    });
+  }
+  collectiveData.timestampLast = block.timestamp;
+  collectiveData.lastPriceFeedId = priceFeed.id;
+  collectiveData.totalBlocksCount = collectiveData.totalBlocksCount! + 1;
+
+  collectiveData.totalExtrinsicCount =
+    collectiveData.totalExtrinsicCount! + block.block.extrinsics.length;
+  collectiveData.avgAvailPrice =
+    (collectiveData.avgAvailPrice! + priceFeed.availPrice) / 2;
+  collectiveData.avgAvailPrice =
+    (collectiveData.avgEthPrice! + priceFeed.ethPrice) / 2;
 
   block.events.map((evt, idx) => {
     const key = `${evt.event.section}.${evt.event.method}`;
@@ -55,6 +88,23 @@ export async function handleExtrinsics(
         extIdToDetails[relatedExtrinsicIndex].success = true;
     }
   });
+  // FEES calc
+  let totalFee = 0; // Initialize totalFee as a BigInt to handle large numbers
+
+  // Iterate through each extrinsic ID and add the fee to totalFee
+  for (const id in extIdToDetails) {
+    const details = extIdToDetails[id];
+
+    // Only add the fee if it exists and is a valid number
+    if (details.fee) {
+      // Convert fee to BigInt (or Number if fee is smaller)
+      totalFee += Number(details.fee); // Or use parseFloat(details.fee) for decimals
+    }
+  }
+  const totalFeeUSD = totalFee * priceFeed.availPrice;
+  collectiveData.totalFees = collectiveData.totalFees! + totalFee;
+  collectiveData.totalFeesAvail = collectiveData.totalFeesAvail! + totalFee;
+  collectiveData.totalFeesUSD = collectiveData.totalFeesUSD! + totalFeeUSD;
   // Extrinsics
 
   logger.info(`Block Extrinsics - ${block.block.extrinsics.length}`);
@@ -90,7 +140,24 @@ export async function handleExtrinsics(
       );
     }
   });
+
+  if (daSubmissions.length > 0) {
+    const daFees = daSubmissions.reduce((sum, das) => {
+      if (das.fees) {
+        sum = sum + das.fees || 0;
+      }
+      return sum;
+    }, 0);
+    const daFeesUSD = daFees * priceFeed.availPrice;
+    collectiveData.totalDataBlocksCount =
+      collectiveData.totalDataBlocksCount! + 1;
+    collectiveData.totalDAFees = collectiveData.totalDAFees! + daFees;
+    collectiveData.totalDAFeesUSD = collectiveData.totalDAFeesUSD! + daFeesUSD;
+    collectiveData.totalDataSubmissionCount =
+      collectiveData.totalDataSubmissionCount! + daSubmissions.length;
+  }
   await Promise.all([
+    await collectiveData.save(),
     store.bulkCreate("Extrinsic", calls),
     store.bulkCreate("DataSubmission", daSubmissions),
   ]);

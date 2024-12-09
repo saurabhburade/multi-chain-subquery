@@ -187,6 +187,26 @@ type DataSubmission @entity {
   priceFeed: PriceFeedMinute
 }
 
+type CollectiveData @entity {
+  id: ID!
+  totalByteSize: Int! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesAvail: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  avgAvailPrice: Float
+  avgEthPrice: Float
+}
+
 type AccounToUpdateValue @entity {
   id: ID!
   accounts: [String]!
