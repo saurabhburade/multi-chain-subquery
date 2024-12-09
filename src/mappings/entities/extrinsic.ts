@@ -148,6 +148,12 @@ export async function handleExtrinsics(
       }
       return sum;
     }, 0);
+    const daSize = daSubmissions.reduce((sum, das) => {
+      if (das.byteSize) {
+        sum = sum + das.byteSize || 0;
+      }
+      return sum;
+    }, 0);
     const daFeesUSD = daFees * priceFeed.availPrice;
     collectiveData.totalDataBlocksCount =
       collectiveData.totalDataBlocksCount! + 1;
@@ -155,6 +161,7 @@ export async function handleExtrinsics(
     collectiveData.totalDAFeesUSD = collectiveData.totalDAFeesUSD! + daFeesUSD;
     collectiveData.totalDataSubmissionCount =
       collectiveData.totalDataSubmissionCount! + daSubmissions.length;
+    collectiveData.totalByteSize = collectiveData.totalByteSize! + daSize || 0;
   }
   await Promise.all([
     await collectiveData.save(),
