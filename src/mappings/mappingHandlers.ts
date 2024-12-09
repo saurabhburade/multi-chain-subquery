@@ -124,6 +124,11 @@ export const blockHandler = async (
         const event = block.events[index];
         const key = `${event.event.section}.${event.event.method}`;
         if (key === "transactionPayment.TransactionFeePaid") {
+          logger.info(
+            `BLOCK HANDLE :::::::::::::::::: FEES ${JSON.stringify(
+              event.event.data.toJSON() as any[]
+            )}`
+          );
           const parsedfee = getFeesFromEvent(
             event.event.data.toJSON() as any[]
           );
