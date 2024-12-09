@@ -17,7 +17,7 @@ export function exponentToBigDecimal(decimals: BigInt): Number {
 export function bigDecimalExp18(): Number {
   return Number("1000000000000000000");
 }
-
+export const ORACLE_ADDRESS = "0x0AdDd25a91563696D8567Df78D5A01C9a991F9B8";
 // export function convertEthToDecimal(eth: BigInt): Number {
 //   return eth.toBigDecimal().div(ONE_BD);
 // }

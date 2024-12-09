@@ -91,118 +91,18 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
-      const priceFeedOfGivenMinute = await PriceFeedMinute.get(minuteId.toString());
-      if (
-        priceFeedOfGivenMinute === undefined ||
-        priceFeedOfGivenMinute === null
-      ) {
-        const ife = OneinchABIAbi__factory.createInterface();
-        const encodedEth = ife.encodeFunctionData("getRate", [
-          "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
-          "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
-          false,
-        ]);
-        const encodedAvail = ife.encodeFunctionData("getRate", [
-          "0xEeB4d8400AEefafC1B2953e0094134A887C76Bd8", // WETH
-          "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
-          false,
-        ]);
-
-        const blockNumberApi = await fetch(
-          `https://coins.llama.fi/block/ethereum/${Number(
-            block.timestamp.getTime() / 1000
-          )}`,
-          {
-            method: "GET",
-          }
-        );
-
-        const ethBlockContext = await blockNumberApi.json();
-        logger.info(
-          `Expected ETH BLOCK::::::  ${JSON.stringify(
-            ethBlockContext
-          )} AT ${Number(
-            block.timestamp.getTime() / 1000
-          )} ::: Date :: ${blockDate}`
-        );
-        const rpcDataEth = await fetch(
-          "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
-          {
-            method: "POST",
-            headers: {},
-            body: JSON.stringify({
-              id: 1,
-              jsonrpc: "2.0",
-              method: "eth_call",
-              params: [
-                {
-                  to: ORACLE_ADDRESS,
-                  data: encodedEth,
-                },
-                `0x${ethBlockContext.height.toString(16)}`,
-              ],
-            }),
-          }
-        );
-        const rpcDataAvail = await fetch(
-          "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
-          {
-            method: "POST",
-            headers: {},
-            body: JSON.stringify({
-              id: 1,
-              jsonrpc: "2.0",
-              method: "eth_call",
-              params: [
-                {
-                  to: ORACLE_ADDRESS,
-                  data: encodedAvail,
-                },
-                `0x${ethBlockContext.height.toString(16)}`,
-              ],
-            }),
-          }
-        );
-        const ethResultRaw = await rpcDataEth.json();
-        const availResultRaw = await rpcDataAvail.json();
-        if (ethResultRaw) {
-          logger.info(
-            `RAW ETH Price Feed::::::  ${JSON.stringify(ethResultRaw)}`
-          );
-        }
-        const decodedEth = ife.decodeFunctionResult(
-          "getRate",
-          ethResultRaw.result
-        );
-        const decodedAvail = ife.decodeFunctionResult(
-          "getRate",
-          availResultRaw.result
-        );
-
-        if (decodedEth) {
-          logger.info(`New ETH Price Feed::::::  ${decodedEth.toString()}`);
-        }
-        if (decodedAvail) {
-          logger.info(`New AVAIL Price Feed::::::  ${decodedAvail.toString()}`);
-        }
-        const savedPrice = await handleNewPriceMinute({
-          availPrice: Number(decodedAvail.toString()),
-          ethPrice: Number(decodedEth.toString()),
-          availBlock: blockHeader.number.toNumber(),
-          availDate: blockDate,
-          ethBlock: Number(ethBlockContext.height),
-          ethDate: new Date(Number(ethBlockContext.timestamp) * 1000),
-        });
-        logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
-      }
+      const savedPrice = await handleNewPriceMinute({
+        block,
+      });
+      logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
     } catch (error) {
       logger.error(
-        "BLOCK SAVE ERRORRRRRR ::::::::::::::::::" +
+        "handleBlock  ERRORRRRRR ::::::::::::::::::" +
           block.block.header.number.toNumber() +
           "::::::::::::::::::" +
           blockHeader.hash.toString()
       );
-      logger.error("BLOCK SAVE ERRORRRRRR ::::::::::::::::::" + error);
+      logger.error("handleBlock ERRORRRRRR ::::::::::::::::::" + error);
     }
   }
 }
