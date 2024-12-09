@@ -191,3 +191,5 @@ type AccounToUpdateValue @entity {
   id: ID!
   accounts: [String]!
 }
+
+

@@ -26,7 +26,7 @@ import { extractAuthor } from "../utils/author";
 import { formatInspect } from "../utils/inspect";
 import {
   getFeesFromEvent,
-  handleDaSubmission,
+  handleDaSubmissionData,
   handleVectorExecuteMessage,
   handleVectorSendMessage,
 } from "../utils/extrinsic";
@@ -36,6 +36,7 @@ import { OneinchABIAbi__factory } from "../types/contracts";
 
 import fetch from "node-fetch";
 import { handleNewPriceMinute } from "./pricefeed/savePrices";
+import { handleExtrinsics } from "./entities/extrinsic";
 
 let specVersion: SpecVersion;
 const ENABLE_LOG = true;
@@ -68,22 +69,7 @@ export const filteredOutEvents = [
 export interface CorrectSubstrateBlock extends SubstrateBlock {
   timestamp: Date;
 }
-const REFERENCE_BLOCK_TIMESTAMP = 1720082315000;
-const BLOCK_TIME = 12;
-const REFERENCE_BLOCK = 20232007;
-const getBlockForTimestamp = (stamp: number) => {
-  const referenceTime = REFERENCE_BLOCK_TIMESTAMP;
-  const targetTime = stamp;
-  // Calculate the time difference in seconds
-  const timeDifferenceInSeconds = (targetTime - referenceTime) / 1000;
-  // Calculate how many blocks have passed since the reference block
-  const blocksPassed = timeDifferenceInSeconds / BLOCK_TIME;
 
-  // Estimate the block number for the given target date
-  const estimatedBlockNumber = REFERENCE_BLOCK + Math.floor(blocksPassed);
-
-  return estimatedBlockNumber;
-};
 export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const blockHeader = block.block.header;
   let blockRecord = await Block.get(blockHeader.number.toString());
@@ -124,11 +110,11 @@ export const blockHandler = async (
         const event = block.events[index];
         const key = `${event.event.section}.${event.event.method}`;
         if (key === "transactionPayment.TransactionFeePaid") {
-          logger.info(
-            `BLOCK HANDLE :::::::::::::::::: FEES ${JSON.stringify(
-              event.event.data.toJSON() as any[]
-            )}`
-          );
+          // logger.info(
+          //   `BLOCK HANDLE :::::::::::::::::: FEES ${JSON.stringify(
+          //     event.event.data.toJSON() as any[]
+          //   )}`
+          // );
           const parsedfee = getFeesFromEvent(
             event.event.data.toJSON() as any[]
           );
@@ -164,7 +150,8 @@ export const blockHandler = async (
 
       return await blockRecord.save();
     }
-
+    await handleExtrinsics(block, priceFeed);
+    // await Promise.all([]);
     // await Promise.all([
     //   handleLogs(blockHeader.number.toString(), blockHeader.digest),
     //   updateSession(blockRecord, blockHeader.digest),
@@ -294,45 +281,6 @@ export function handleEvent(
     logger.error("record event error detail:" + err);
     throw err;
   }
-}
-
-export function handleDataSubmission(
-  idx: string,
-  extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
-  extraDetails:
-    | {
-        nbEvents: number;
-        success?: boolean | undefined;
-        fee?: string | undefined;
-        feeRounded?: number | undefined;
-      }
-    | undefined
-): DataSubmission {
-  const block = extrinsic.block as CorrectSubstrateBlock;
-  const ext = extrinsic.extrinsic;
-  const methodData = ext.method;
-
-  let dataSubmissionSize =
-    methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
-  const formattedInspect = formatInspect(ext.inspect());
-  const appIdInspect = formattedInspect.find((x) => x.name === "appId");
-  const appId = appIdInspect ? Number(appIdInspect.value) : 0;
-  const dataSubmissionRecord = new DataSubmission(
-    idx,
-    idx,
-    block.timestamp,
-    dataSubmissionSize,
-    appId,
-    ext.signer.toString()
-  );
-  if (extraDetails?.feeRounded) {
-    dataSubmissionRecord.fees = extraDetails.feeRounded;
-    const oneMbInBytes = 1_048_576;
-    const feesPerMb =
-      (extraDetails.feeRounded / dataSubmissionSize) * oneMbInBytes;
-    dataSubmissionRecord.feesPerMb = feesPerMb;
-  }
-  return dataSubmissionRecord;
 }
 
 export const handleLogs = async (blockNumber: string, digest: Digest) => {

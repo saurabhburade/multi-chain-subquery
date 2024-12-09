@@ -64,7 +64,7 @@ export const shouldGetFees = (module: string): boolean => {
     return !ignoreModules.includes(module)
 }
 
-export const handleDaSubmission = (data: Codec) => {
+export const handleDaSubmissionData = (data: Codec) => {
     return data.toString().slice(0, 64)
 }
 
