@@ -155,30 +155,36 @@ export function handleDataSubmission(
       }
     | undefined
 ): DataSubmission {
-  const block = extrinsic.block as CorrectSubstrateBlock;
-  const ext = extrinsic.extrinsic;
-  const methodData = ext.method;
+  try {
+    const block = extrinsic.block as CorrectSubstrateBlock;
+    const ext = extrinsic.extrinsic;
+    const methodData = ext.method;
 
-  let dataSubmissionSize =
-    methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
-  const formattedInspect = formatInspect(ext.inspect());
-  const appIdInspect = formattedInspect.find((x) => x.name === "appId");
-  const appId = appIdInspect ? Number(appIdInspect.value) : 0;
-  const dataSubmissionRecord = new DataSubmission(
-    idx,
-    idx,
-    block.timestamp,
-    dataSubmissionSize,
-    appId,
-    ext.signer.toString()
-  );
+    let dataSubmissionSize =
+      methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
+    const formattedInspect = formatInspect(ext.inspect());
+    const appIdInspect = formattedInspect.find((x) => x.name === "appId");
+    const appId = appIdInspect ? Number(appIdInspect.value) : 0;
+    const dataSubmissionRecord = new DataSubmission(
+      idx,
+      idx,
+      block.timestamp,
+      dataSubmissionSize,
+      appId,
+      ext.signer.toString()
+    );
 
-  if (extraDetails?.feeRounded) {
-    dataSubmissionRecord.fees = extraDetails.feeRounded;
-    const oneMbInBytes = 1_048_576;
-    const feesPerMb =
-      (extraDetails.feeRounded / dataSubmissionSize) * oneMbInBytes;
-    dataSubmissionRecord.feesPerMb = feesPerMb;
+    if (extraDetails?.feeRounded) {
+      dataSubmissionRecord.fees = extraDetails.feeRounded;
+      const oneMbInBytes = 1_048_576;
+      const feesPerMb =
+        (extraDetails.feeRounded / dataSubmissionSize) * oneMbInBytes;
+      dataSubmissionRecord.feesPerMb = feesPerMb;
+    }
+    return dataSubmissionRecord;
+  } catch (error) {
+    logger.error("handleDataSubmission error detail:" + error);
+
+    throw error;
   }
-  return dataSubmissionRecord;
 }
