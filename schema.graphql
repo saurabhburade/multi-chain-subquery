@@ -78,7 +78,7 @@ type Extrinsic @entity {
   txHash: String! @index
   module: String! @index
   call: String! @index
-  blockHeight: BigInt! @index
+  blockHeight: String! @index
   success: Boolean!
   isSigned: Boolean!
   extrinsicIndex: Int!
@@ -95,7 +95,6 @@ type Extrinsic @entity {
   ethPrice: Float!
   availPrice: Float!
   ethBlock: Int!
-
 }
 
 type Event @entity {
@@ -191,5 +190,3 @@ type AccounToUpdateValue @entity {
   id: ID!
   accounts: [String]!
 }
-
-
