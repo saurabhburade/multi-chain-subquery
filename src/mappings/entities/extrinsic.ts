@@ -152,6 +152,8 @@ export function handleCall(
     extrinsicRecord.feesRounded = extraDetails?.feeRounded
       ? extraDetails?.feeRounded
       : 0;
+    logger.info(`Saved Extrinsic - ${JSON.stringify(extrinsicRecord)}`);
+
     return extrinsicRecord;
   } catch (err: any) {
     logger.error(
@@ -203,6 +205,10 @@ export function handleDataSubmission(
         (extraDetails.feeRounded / dataSubmissionSize) * oneMbInBytes;
       dataSubmissionRecord.feesPerMb = feesPerMb;
     }
+    logger.info(
+      `Saved DataSubmission - ${JSON.stringify(dataSubmissionRecord)}`
+    );
+
     return dataSubmissionRecord;
   } catch (error) {
     logger.error("handleDataSubmission error detail:" + error);
