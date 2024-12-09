@@ -48,20 +48,29 @@ export async function handleExtrinsics(
     };
     const extraData = extIdToDetails[idx];
 
-    handleCall(
-      `${blockNumberString}-${idx}`,
-      substrateExtrinsic,
-      extraData,
-      priceFeed
-    );
-
-    if (isDataSubmission)
-      handleDataSubmission(
+    calls.push(
+      handleCall(
         `${blockNumberString}-${idx}`,
         substrateExtrinsic,
-        extraData
+        extraData,
+        priceFeed
+      )
+    );
+
+    if (isDataSubmission) {
+      daSubmissions.push(
+        handleDataSubmission(
+          `${blockNumberString}-${idx}`,
+          substrateExtrinsic,
+          extraData
+        )
       );
+    }
   });
+  await Promise.all([
+    store.bulkCreate("Extrinsic", calls),
+    store.bulkCreate("DataSubmission", daSubmissions),
+  ]);
 }
 
 export function handleCall(
@@ -128,7 +137,7 @@ export function handleCall(
       ? extraDetails?.feeRounded
       : 0;
     logger.info(`Saved Extrinsic - ${JSON.stringify(extrinsicRecord)}`);
-    extrinsicRecord.save();
+    // extrinsicRecord.save();
     return extrinsicRecord;
   } catch (err: any) {
     logger.error(
@@ -183,7 +192,7 @@ export function handleDataSubmission(
     logger.info(
       `Saved DataSubmission - ${JSON.stringify(dataSubmissionRecord)}`
     );
-    dataSubmissionRecord.save();
+    // dataSubmissionRecord.save();
     return dataSubmissionRecord;
   } catch (error) {
     logger.error("handleDataSubmission error detail:" + error);
