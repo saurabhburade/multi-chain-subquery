@@ -8,6 +8,7 @@ import {
 import { CorrectSubstrateBlock } from "../mappingHandlers";
 import { formatInspect } from "../../utils/inspect";
 import {
+  getFeesFromEvent,
   handleDaSubmissionData,
   handleVectorExecuteMessage,
   handleVectorSendMessage,
@@ -33,6 +34,27 @@ export async function handleExtrinsics(
     };
   } = {};
 
+  block.events.map((evt, idx) => {
+    const key = `${evt.event.section}.${evt.event.method}`;
+    const relatedExtrinsicIndex = evt.phase.isApplyExtrinsic
+      ? evt.phase.asApplyExtrinsic.toNumber()
+      : -1;
+    if (relatedExtrinsicIndex !== -1) {
+      if (extIdToDetails[relatedExtrinsicIndex] === undefined) {
+        extIdToDetails[relatedExtrinsicIndex] = {
+          nbEvents: 0,
+        };
+      }
+      extIdToDetails[relatedExtrinsicIndex].nbEvents += 1;
+      if (key === "transactionPayment.TransactionFeePaid") {
+        let fees = getFeesFromEvent(evt.event.data.toJSON() as any[]);
+        extIdToDetails[relatedExtrinsicIndex].fee = fees.fee;
+        extIdToDetails[relatedExtrinsicIndex].feeRounded = fees.feeRounded;
+      }
+      if (key === "system.ExtrinsicSuccess")
+        extIdToDetails[relatedExtrinsicIndex].success = true;
+    }
+  });
   // Extrinsics
 
   logger.info(`Block Extrinsics - ${block.block.extrinsics.length}`);
