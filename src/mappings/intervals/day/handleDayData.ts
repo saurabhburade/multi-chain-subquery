@@ -88,6 +88,7 @@ export async function handleDayData(
       dayDataRecord.totalDataSubmissionCount! + daSubmissions.length;
     dayDataRecord.totalByteSize = dayDataRecord.totalByteSize! + daSize || 0;
     dayDataRecord.totalBlocksCount = dayDataRecord.totalBlocksCount! + 1;
+    dayDataRecord.totalExtrinsicCount = dayDataRecord.totalExtrinsicCount! + 1;
 
     dayDataRecord.save();
   }
