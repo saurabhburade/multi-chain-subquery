@@ -90,6 +90,6 @@ export async function handleDayData(
     dayDataRecord.totalBlocksCount = dayDataRecord.totalBlocksCount! + 1;
     dayDataRecord.totalExtrinsicCount = dayDataRecord.totalExtrinsicCount! + 1;
 
-    dayDataRecord.save();
+    await dayDataRecord.save();
   }
 }
