@@ -120,7 +120,8 @@ export const blockHandler = async (
         fee: 0,
         feesRounded: 0,
       };
-      block.events.forEach((event) => {
+      for (let index = 0; index < block.events.length; index++) {
+        const event = block.events[index];
         const key = `${event.event.section}.${event.event.method}`;
         if (key === "transactionPayment.TransactionFeePaid") {
           const parsedfee = getFeesFromEvent(
@@ -129,7 +130,8 @@ export const blockHandler = async (
           fees.fee += Number(parsedfee.fee);
           fees.feesRounded += Number(parsedfee.feeRounded);
         }
-      });
+      }
+
       logger.info(
         `BLOCK HANDLE :::::::::::::::::: FEES ${JSON.stringify(fees)}`
       );
