@@ -130,7 +130,7 @@ export function handleCall(
         txHash: ext.hash.toString(), // txHash - Transaction hash
         module: methodData.section, // module - The module the extrinsic belongs to
         call: methodData.method, // call - The method of the extrinsic
-        blockHeight: block.block.header.number.toBigInt(), // blockHeight - The block's height as a BigInt
+        blockHeight: BigInt(block.block.header.number.toString()), // blockHeight - The block's height as a BigInt
         success: extraDetails?.success || false, // success - Whether the extrinsic was successful
         isSigned: ext.isSigned, // isSigned - Whether the extrinsic is signed
         extrinsicIndex: extrinsic.idx, // extrinsicIndex - Index of the extrinsic in the block
@@ -140,7 +140,7 @@ export function handleCall(
         signature: ext.signature.toString(), // signature - The signature of the extrinsic
         nonce: ext.nonce.toNumber(), // nonce - The nonce of the extrinsic
         argsName: methodData.meta.args.map((a) => a.name.toString()), // argsName - List of argument names in the extrinsic method
-        argsValue: argsValue, // argsValue - List of argument values passed to the extrinsic
+        argsValue: [], // argsValue - List of argument values passed to the extrinsic
         nbEvents: extraDetails?.nbEvents || 0, // nbEvents - The number of events related to the extrinsic
         ethPrice: priceFeed.ethPrice, // ethPrice - Current Ethereum price (or some other token's price)
         availPrice: priceFeed.availPrice, // availPrice - Availability price (if applicable)
