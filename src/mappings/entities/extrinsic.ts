@@ -47,14 +47,14 @@ export async function handleExtrinsics(
       block,
     };
     const extraData = extIdToDetails[idx];
-    calls.push(
-      handleCall(
-        `${blockNumberString}-${idx}`,
-        substrateExtrinsic,
-        extraData,
-        priceFeed
-      )
+
+    handleCall(
+      `${blockNumberString}-${idx}`,
+      substrateExtrinsic,
+      extraData,
+      priceFeed
     );
+
     // if (isDataSubmission)
     //   daSubmissions.push(
     //     handleDataSubmission(
@@ -130,7 +130,7 @@ export function handleCall(
       ? extraDetails?.feeRounded
       : 0;
     logger.info(`Saved Extrinsic - ${JSON.stringify(extrinsicRecord)}`);
-
+    extrinsicRecord.save();
     return extrinsicRecord;
   } catch (err: any) {
     logger.error(
