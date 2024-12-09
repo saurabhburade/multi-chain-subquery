@@ -55,14 +55,14 @@ export async function handleExtrinsics(
       priceFeed
     );
 
-    // if (isDataSubmission)
-    //   daSubmissions.push(
-    //     handleDataSubmission(
-    //       `${blockNumberString}-${idx}`,
-    //       substrateExtrinsic,
-    //       extraData
-    //     )
-    //   );
+    if (isDataSubmission)
+      daSubmissions.push(
+        handleDataSubmission(
+          `${blockNumberString}-${idx}`,
+          substrateExtrinsic,
+          extraData
+        )
+      );
   });
 }
 

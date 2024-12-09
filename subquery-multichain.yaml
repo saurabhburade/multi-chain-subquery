@@ -4,4 +4,4 @@ query:
   version: '*'
 projects:
   - avail.yaml
-  - ethereum.yaml
+  # - ethereum.yaml
