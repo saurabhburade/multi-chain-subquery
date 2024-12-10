@@ -108,8 +108,8 @@ export async function handleNewPriceMinute({
     if (decodedAvail) {
       logger.info(`New AVAIL Price Feed::::::  ${decodedAvail.toString()}`);
     }
-    const availPrice = Number(decodedAvail.toString());
-    const ethPrice = Number(decodedEth.toString());
+    const availPrice = Number(decodedAvail.toString()) / 1e6;
+    const ethPrice = Number(decodedEth.toString()) / 1e6;
     const availBlock = block.block.header.number.toNumber();
     const availDate = blockDate;
     const ethBlock = Number(ethBlockContext.height);

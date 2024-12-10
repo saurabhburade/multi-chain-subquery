@@ -99,7 +99,7 @@ export async function handleExtrinsics(
     // Only add the fee if it exists and is a valid number
     if (details.fee) {
       // Convert fee to BigInt (or Number if fee is smaller)
-      totalFee += Number(details.fee); // Or use parseFloat(details.fee) for decimals
+      totalFee += Number(details.feeRounded); // Or use parseFloat(details.fee) for decimals
     }
   }
   const totalFeeUSD = totalFee * priceFeed.availPrice;
