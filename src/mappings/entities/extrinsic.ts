@@ -83,7 +83,9 @@ export async function handleExtrinsics(
       extIdToDetails[relatedExtrinsicIndex].nbEvents += 1;
       if (key === "transactionPayment.TransactionFeePaid") {
         let fees = getFeesFromEvent(evt.event.data.toJSON() as any[]);
-        extIdToDetails[relatedExtrinsicIndex].fee = fees.fee;
+        extIdToDetails[relatedExtrinsicIndex].fee = (
+          Number(fees.fee) / 1e18
+        ).toString();
         extIdToDetails[relatedExtrinsicIndex].feeRounded = fees.feeRounded;
       }
       if (key === "system.ExtrinsicSuccess")
