@@ -109,7 +109,9 @@ export async function handleExtrinsics(
   // Extrinsics
 
   logger.info(`Block Extrinsics - ${block.block.extrinsics.length}`);
-  logger.info(`Block Extrinsics FEES - ${JSON.stringify(extIdToDetails)}`);
+  if (totalFee > 0) {
+    logger.info(`Block Extrinsics FEES - ${JSON.stringify(extIdToDetails)}`);
+  }
   block.block.extrinsics.map((extrinsic, idx) => {
     const methodData = extrinsic.method;
     const extrinsicType = `${methodData.section}_${methodData.method}`;
