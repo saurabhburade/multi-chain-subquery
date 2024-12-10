@@ -109,6 +109,7 @@ export async function handleExtrinsics(
   // Extrinsics
 
   logger.info(`Block Extrinsics - ${block.block.extrinsics.length}`);
+  logger.info(`Block Extrinsics FEES - ${JSON.stringify(extIdToDetails)}`);
   block.block.extrinsics.map((extrinsic, idx) => {
     const methodData = extrinsic.method;
     const extrinsicType = `${methodData.section}_${methodData.method}`;
@@ -292,9 +293,7 @@ export function handleDataSubmission(
         (extraDetails.feeRounded / dataSubmissionSize) * oneMbInBytes;
       dataSubmissionRecord.feesPerMb = feesPerMb;
     }
-    logger.info(
-      `Saved DataSubmission - ${JSON.stringify(dataSubmissionRecord)}`
-    );
+
     // dataSubmissionRecord.save();
     return dataSubmissionRecord;
   } catch (error) {
