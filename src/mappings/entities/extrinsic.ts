@@ -15,6 +15,7 @@ import {
   handleVectorSendMessage,
 } from "../../utils/extrinsic";
 import { handleDayData } from "../intervals/day/handleDayData";
+import { handleHourData } from "../intervals/hour/handleHourData";
 
 export async function handleExtrinsics(
   block: CorrectSubstrateBlock,
@@ -168,6 +169,7 @@ export async function handleExtrinsics(
     collectiveData.totalByteSize = collectiveData.totalByteSize! + daSize || 0;
   }
   await handleDayData(block, priceFeed, calls, daSubmissions);
+  await handleHourData(block, priceFeed, calls, daSubmissions);
   await Promise.all([
     await collectiveData.save(),
     store.bulkCreate("Extrinsic", calls),
