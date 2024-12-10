@@ -238,7 +238,7 @@ export function handleCall(
     extrinsicRecord.feesRounded = extraDetails?.feeRounded
       ? extraDetails?.feeRounded
       : 0;
-    logger.info(`Saved Extrinsic - ${JSON.stringify(extrinsicRecord)}`);
+    // logger.info(`Saved Extrinsic - ${JSON.stringify(extrinsicRecord)}`);
     // extrinsicRecord.save();
     return extrinsicRecord;
   } catch (err: any) {
