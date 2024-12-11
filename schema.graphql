@@ -268,9 +268,34 @@ type AccountDayData @entity {
   endBlock: Float
   avgAvailPrice: Float
   avgEthPrice: Float
-  prevDayData: CollectiveDayData
+  prevDayData: AccountDayData
   account: AccountEntity! @index
 }
+type AccountHourData @entity {
+  id: ID!
+  totalByteSize: Int! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesAvail: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  timestampStart: Date! @index
+  startBlock: Float
+  endBlock: Float
+  avgAvailPrice: Float
+  avgEthPrice: Float
+  prevHourData: AccountHourData
+  account: AccountEntity! @index
+}
+
 type CollectiveHourData @entity {
   id: ID!
   totalByteSize: Int! @index

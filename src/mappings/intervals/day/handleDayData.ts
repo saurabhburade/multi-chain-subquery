@@ -1,4 +1,6 @@
+import { SubstrateExtrinsic } from "@subql/types";
 import {
+  AccountDayData,
   CollectiveDayData,
   DataSubmission,
   Extrinsic,
@@ -93,88 +95,98 @@ export async function handleDayData(
   await dayDataRecord.save();
 }
 export async function handleAccountDayData(
-  block: CorrectSubstrateBlock,
-  priceFeed: PriceFeedMinute,
-  extrinsics: Extrinsic[],
-  daSubmissions: DataSubmission[]
+  extrinsicRecord: Extrinsic,
+  extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
+  priceFeed: PriceFeedMinute
 ) {
+  const block = extrinsic.block as CorrectSubstrateBlock;
+
   const blockDate = new Date(Number(block.timestamp.getTime()));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   const dayId = Math.floor(blockDate.getTime() / 86400000);
   const prevDayId = dayId - 1;
+  const ext = extrinsic.extrinsic;
 
-  let dayDataRecord = await CollectiveDayData.get(dayId.toString());
-  if (dayDataRecord === undefined || dayDataRecord === null) {
-    dayDataRecord = CollectiveDayData.create({
-      id: dayId.toString(),
-      timestampLast: block.timestamp,
+  const methodData = ext.method;
+  let dataSubmissionSize =
+    methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
+  let accountDayDataRecord = await AccountDayData.get(
+    extrinsicRecord.signer.toString()
+  );
+  const oneMbInBytes = 1_048_576;
+  const feesPerMb =
+    (extrinsicRecord.feesRounded! / dataSubmissionSize) * oneMbInBytes;
+  if (accountDayDataRecord === undefined || accountDayDataRecord === null) {
+    accountDayDataRecord = AccountDayData.create({
+      id: `${extrinsicRecord.signer.toString()}-dayId-${dayId}`,
+      accountId: extrinsicRecord.signer.toString(),
+
+      timestampLast: extrinsicRecord.timestamp,
       totalByteSize: 0,
-      avgAvailPrice: priceFeed.availPrice,
-      avgEthPrice: priceFeed.ethPrice,
-      lastPriceFeedId: priceFeed.id,
-      totalBlocksCount: 0,
-      totalDataAccountsCount: 0,
+      timestampStart: extrinsicRecord.timestamp,
+      prevDayDataId: `${extrinsicRecord.signer.toString()}-dayId-${prevDayId}`,
+      avgAvailPrice: extrinsicRecord.availPrice,
+      avgEthPrice: extrinsicRecord.ethPrice,
+      totalDAFees: 0,
+      totalDAFeesUSD: 0,
       totalDataSubmissionCount: 0,
       totalDataBlocksCount: 0,
+      totalBlocksCount: 0,
       totalExtrinsicCount: 0,
       totalFees: 0,
       totalFeesAvail: 0,
       totalFeesUSD: 0,
       totalTransferCount: 0,
-      totalDAFees: 0,
-      totalDAFeesUSD: 0,
-      timestampStart: block.timestamp,
+      lastPriceFeedId: priceFeed.id,
+      endBlock: 0,
       startBlock: block.block.header.number.toNumber(),
-      endBlock: block.block.header.number.toNumber(),
-      //   prevDayDataId: prevDayId.toString(),
     });
   }
+  accountDayDataRecord.timestampLast = extrinsicRecord.timestamp;
 
-  dayDataRecord.avgAvailPrice =
-    (dayDataRecord.avgAvailPrice! + priceFeed.availPrice) / 2;
-  dayDataRecord.avgEthPrice =
-    (dayDataRecord.avgEthPrice! + priceFeed.ethPrice) / 2;
-  dayDataRecord.endBlock = block.block.header.number.toNumber();
-  dayDataRecord.timestampLast = block.timestamp;
-  // FEES calc
-  let totalFee = 0; // Initialize totalFee as a BigInt to handle large numbers
-
-  // Iterate through each extrinsic ID and add the fee to totalFee
-  for (let index = 0; index < extrinsics.length; index++) {
-    const details = extrinsics[index];
-    if (details.fees) {
-      // Convert fee to BigInt (or Number if fee is smaller)
-      totalFee += Number(details.fees); // Or use parseFloat(details.fee) for decimals
+  accountDayDataRecord.avgAvailPrice =
+    (accountDayDataRecord.avgAvailPrice! + priceFeed.availPrice) / 2;
+  accountDayDataRecord.avgEthPrice =
+    (accountDayDataRecord.avgEthPrice! + priceFeed.ethPrice) / 2;
+  const extrinsicType = `${methodData.section}_${methodData.method}`;
+  const isDataSubmission = extrinsicType === "dataAvailability_submitData";
+  const fees = Number(extrinsicRecord.fees);
+  const feesUSD = fees * priceFeed.availPrice;
+  if (isDataSubmission) {
+    accountDayDataRecord.totalDAFees =
+      accountDayDataRecord.totalDAFees! + Number(extrinsicRecord.fees)!;
+    accountDayDataRecord.totalDAFeesUSD =
+      accountDayDataRecord.totalDAFeesUSD! + feesUSD;
+    accountDayDataRecord.totalDataSubmissionCount =
+      accountDayDataRecord.totalDataSubmissionCount! + 1;
+    accountDayDataRecord.totalDataSubmissionCount =
+      accountDayDataRecord.totalDataSubmissionCount! + 1;
+    accountDayDataRecord.totalByteSize =
+      accountDayDataRecord.totalByteSize + Number(dataSubmissionSize);
+    if (
+      accountDayDataRecord.endBlock!.toString() !=
+      block.block.header.number.toNumber().toString()
+    ) {
+      accountDayDataRecord.totalDataBlocksCount =
+        accountDayDataRecord.totalDataBlocksCount! + 1;
     }
   }
-
-  const totalFeeUSD = totalFee * priceFeed.availPrice;
-  dayDataRecord.totalFees = dayDataRecord.totalFees! + totalFee;
-  dayDataRecord.totalFeesAvail = dayDataRecord.totalFeesAvail! + totalFee;
-  dayDataRecord.totalFeesUSD = dayDataRecord.totalFeesUSD! + totalFeeUSD;
-  if (daSubmissions.length > 0) {
-    const daFees = daSubmissions.reduce((sum, das) => {
-      if (das.fees) {
-        sum = sum + das.fees || 0;
-      }
-      return sum;
-    }, 0);
-    const daSize = daSubmissions.reduce((sum, das) => {
-      if (das.byteSize) {
-        sum = sum + das.byteSize || 0;
-      }
-      return sum;
-    }, 0);
-    const daFeesUSD = daFees * priceFeed.availPrice;
-    dayDataRecord.totalDataBlocksCount =
-      dayDataRecord.totalDataBlocksCount! + 1;
-    dayDataRecord.totalDAFees = dayDataRecord.totalDAFees! + daFees;
-    dayDataRecord.totalDAFeesUSD = dayDataRecord.totalDAFeesUSD! + daFeesUSD;
-    dayDataRecord.totalDataSubmissionCount =
-      dayDataRecord.totalDataSubmissionCount! + daSubmissions.length;
-    dayDataRecord.totalByteSize = dayDataRecord.totalByteSize! + daSize || 0;
+  if (
+    accountDayDataRecord.endBlock!.toString() !=
+    block.block.header.number.toNumber().toString()
+  ) {
+    accountDayDataRecord.totalBlocksCount =
+      accountDayDataRecord.totalBlocksCount! + 1;
   }
-  dayDataRecord.totalBlocksCount = dayDataRecord.totalBlocksCount! + 1;
-  dayDataRecord.totalExtrinsicCount = dayDataRecord.totalExtrinsicCount! + 1;
-  await dayDataRecord.save();
+  accountDayDataRecord.totalExtrinsicCount =
+    accountDayDataRecord.totalExtrinsicCount! + 1;
+  accountDayDataRecord.totalFees =
+    accountDayDataRecord.totalFees! + Number(extrinsicRecord.fees!);
+  accountDayDataRecord.totalFeesAvail =
+    accountDayDataRecord.totalFeesAvail! + Number(extrinsicRecord.fees!);
+  accountDayDataRecord.totalFeesUSD =
+    accountDayDataRecord.totalFeesUSD! + Number(feesUSD);
+  accountDayDataRecord.lastPriceFeedId = priceFeed.id;
+  accountDayDataRecord.endBlock = block.block.header.number.toNumber();
+  await accountDayDataRecord.save();
 }

@@ -1,6 +1,7 @@
 import { SubstrateExtrinsic } from "@subql/types";
 import { AccountEntity, Extrinsic, PriceFeedMinute } from "../../types";
 import { CorrectSubstrateBlock } from "../mappingHandlers";
+import { handleAccountDayData } from "../intervals/day/handleDayData";
 
 export async function handleAccount(
   extrinsicRecord: Extrinsic,
@@ -94,5 +95,8 @@ export async function handleAccount(
   accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + Number(feesUSD);
   accountEntity.lastPriceFeedId = priceFeed.id;
   accountEntity.endBlock = block.block.header.number.toNumber();
+  await handleAccountDayData(extrinsicRecord, extrinsic, priceFeed);
+  await handleAccountDayData(extrinsicRecord, extrinsic, priceFeed);
+
   await accountEntity.save();
 }

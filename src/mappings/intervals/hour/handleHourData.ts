@@ -1,4 +1,6 @@
+import { SubstrateExtrinsic } from "@subql/types";
 import {
+  AccountHourData,
   CollectiveDayData,
   CollectiveHourData,
   DataSubmission,
@@ -94,4 +96,103 @@ export async function handleHourData(
   hourDataRecord.totalBlocksCount = hourDataRecord.totalBlocksCount! + 1;
   hourDataRecord.totalExtrinsicCount = hourDataRecord.totalExtrinsicCount! + 1;
   await hourDataRecord.save();
+}
+
+export async function handleAccountHourData(
+  extrinsicRecord: Extrinsic,
+  extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
+  priceFeed: PriceFeedMinute
+) {
+  const block = extrinsic.block as CorrectSubstrateBlock;
+
+  const blockDate = new Date(Number(block.timestamp.getTime()));
+  const minuteId = Math.floor(blockDate.getTime() / 60000);
+  const dayId = Math.floor(blockDate.getTime() / 86400000);
+  const prevDayId = dayId - 1;
+  const hourId = Math.floor(blockDate.getTime() / 3600000); // Divide by milliseconds in an hour
+  const prevHourId = hourId - 1; // Divide by milliseconds in an hour
+  const ext = extrinsic.extrinsic;
+
+  const methodData = ext.method;
+  let dataSubmissionSize =
+    methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
+  let accountHourDataRecord = await AccountHourData.get(
+    extrinsicRecord.signer.toString()
+  );
+  const oneMbInBytes = 1_048_576;
+  const feesPerMb =
+    (extrinsicRecord.feesRounded! / dataSubmissionSize) * oneMbInBytes;
+  if (accountHourDataRecord === undefined || accountHourDataRecord === null) {
+    accountHourDataRecord = AccountHourData.create({
+      id: `${extrinsicRecord.signer.toString()}-hourId-${hourId}`,
+      accountId: extrinsicRecord.signer.toString(),
+
+      timestampLast: extrinsicRecord.timestamp,
+      totalByteSize: 0,
+      timestampStart: extrinsicRecord.timestamp,
+      prevHourDataId: `${extrinsicRecord.signer.toString()}-hourId-${prevHourId}`,
+      avgAvailPrice: extrinsicRecord.availPrice,
+      avgEthPrice: extrinsicRecord.ethPrice,
+      totalDAFees: 0,
+      totalDAFeesUSD: 0,
+      totalDataSubmissionCount: 0,
+      totalDataBlocksCount: 0,
+      totalBlocksCount: 0,
+      totalExtrinsicCount: 0,
+      totalFees: 0,
+      totalFeesAvail: 0,
+      totalFeesUSD: 0,
+      totalTransferCount: 0,
+      lastPriceFeedId: priceFeed.id,
+      endBlock: 0,
+      startBlock: block.block.header.number.toNumber(),
+    });
+  }
+  accountHourDataRecord.timestampLast = extrinsicRecord.timestamp;
+
+  accountHourDataRecord.avgAvailPrice =
+    (accountHourDataRecord.avgAvailPrice! + priceFeed.availPrice) / 2;
+  accountHourDataRecord.avgEthPrice =
+    (accountHourDataRecord.avgEthPrice! + priceFeed.ethPrice) / 2;
+  const extrinsicType = `${methodData.section}_${methodData.method}`;
+  const isDataSubmission = extrinsicType === "dataAvailability_submitData";
+  const fees = Number(extrinsicRecord.fees);
+  const feesUSD = fees * priceFeed.availPrice;
+  if (isDataSubmission) {
+    accountHourDataRecord.totalDAFees =
+      accountHourDataRecord.totalDAFees! + Number(extrinsicRecord.fees)!;
+    accountHourDataRecord.totalDAFeesUSD =
+      accountHourDataRecord.totalDAFeesUSD! + feesUSD;
+    accountHourDataRecord.totalDataSubmissionCount =
+      accountHourDataRecord.totalDataSubmissionCount! + 1;
+    accountHourDataRecord.totalDataSubmissionCount =
+      accountHourDataRecord.totalDataSubmissionCount! + 1;
+    accountHourDataRecord.totalByteSize =
+      accountHourDataRecord.totalByteSize + Number(dataSubmissionSize);
+    if (
+      accountHourDataRecord.endBlock!.toString() !=
+      block.block.header.number.toNumber().toString()
+    ) {
+      accountHourDataRecord.totalDataBlocksCount =
+        accountHourDataRecord.totalDataBlocksCount! + 1;
+    }
+  }
+  if (
+    accountHourDataRecord.endBlock!.toString() !=
+    block.block.header.number.toNumber().toString()
+  ) {
+    accountHourDataRecord.totalBlocksCount =
+      accountHourDataRecord.totalBlocksCount! + 1;
+  }
+  accountHourDataRecord.totalExtrinsicCount =
+    accountHourDataRecord.totalExtrinsicCount! + 1;
+  accountHourDataRecord.totalFees =
+    accountHourDataRecord.totalFees! + Number(extrinsicRecord.fees!);
+  accountHourDataRecord.totalFeesAvail =
+    accountHourDataRecord.totalFeesAvail! + Number(extrinsicRecord.fees!);
+  accountHourDataRecord.totalFeesUSD =
+    accountHourDataRecord.totalFeesUSD! + Number(feesUSD);
+  accountHourDataRecord.lastPriceFeedId = priceFeed.id;
+  accountHourDataRecord.endBlock = block.block.header.number.toNumber();
+  await accountHourDataRecord.save();
 }
