@@ -52,8 +52,7 @@ export async function handleAccount(
     });
   }
   accountEntity.timestampLast = extrinsicRecord.timestamp;
-  accountEntity.totalByteSize =
-    accountEntity.totalByteSize + Number(dataSubmissionSize);
+
   accountEntity.updatedAt = extrinsicRecord.timestamp;
   accountEntity.avgAvailPrice =
     (accountEntity.avgAvailPrice! + priceFeed.availPrice) / 2;
@@ -71,6 +70,8 @@ export async function handleAccount(
       accountEntity.totalDataSubmissionCount! + 1;
     accountEntity.totalDataSubmissionCount =
       accountEntity.totalDataSubmissionCount! + 1;
+    accountEntity.totalByteSize =
+      accountEntity.totalByteSize + Number(dataSubmissionSize);
     if (
       accountEntity.endBlock!.toString() !=
       block.block.header.number.toNumber().toString()
