@@ -16,6 +16,7 @@ import {
 } from "../../utils/extrinsic";
 import { handleDayData } from "../intervals/day/handleDayData";
 import { handleHourData } from "../intervals/hour/handleHourData";
+import { handleAccount } from "./accountData";
 
 export async function handleExtrinsics(
   block: CorrectSubstrateBlock,
@@ -115,7 +116,9 @@ export async function handleExtrinsics(
   if (totalFee > 0) {
     logger.info(`Block Extrinsics FEES - ${JSON.stringify(extIdToDetails)}`);
   }
-  block.block.extrinsics.map((extrinsic, idx) => {
+  for (let index = 0; index < block.block.extrinsics.length; index++) {
+    const idx = index;
+    const extrinsic = block.block.extrinsics[index];
     const methodData = extrinsic.method;
     const extrinsicType = `${methodData.section}_${methodData.method}`;
     const isDataSubmission = extrinsicType === "dataAvailability_submitData";
@@ -126,15 +129,15 @@ export async function handleExtrinsics(
       block,
     };
     const extraData = extIdToDetails[idx];
-
-    calls.push(
-      handleCall(
-        `${blockNumberString}-${idx}`,
-        substrateExtrinsic,
-        extraData,
-        priceFeed
-      )
+    const extrinsicRecord = handleCall(
+      `${blockNumberString}-${idx}`,
+      substrateExtrinsic,
+      extraData,
+      priceFeed
     );
+    await handleAccount(extrinsicRecord, substrateExtrinsic, priceFeed);
+
+    calls.push(extrinsicRecord);
 
     if (isDataSubmission) {
       daSubmissions.push(
@@ -146,7 +149,7 @@ export async function handleExtrinsics(
         )
       );
     }
-  });
+  }
 
   if (daSubmissions.length > 0) {
     const daFees = daSubmissions.reduce((sum, das) => {

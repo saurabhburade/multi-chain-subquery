@@ -65,7 +65,15 @@ export const updateAccounts = async (addresses: string[], timestamp: Date) => {
           : balanceFree.toString();
         let record = accountsInDb.find((x) => x.id === address);
         if (!record) {
-          record = new AccountEntity(address, date, date, timestamp, address);
+          record = new AccountEntity(
+            address,
+            date,
+            date,
+            timestamp,
+            address,
+            0,
+            timestamp
+          );
           isNew = true;
         }
         record.amount = amount;
