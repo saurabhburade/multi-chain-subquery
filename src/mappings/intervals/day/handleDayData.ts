@@ -159,8 +159,6 @@ export async function handleAccountDayData(
       accountDayDataRecord.totalDAFeesUSD! + feesUSD;
     accountDayDataRecord.totalDataSubmissionCount =
       accountDayDataRecord.totalDataSubmissionCount! + 1;
-    accountDayDataRecord.totalDataSubmissionCount =
-      accountDayDataRecord.totalDataSubmissionCount! + 1;
     accountDayDataRecord.totalByteSize =
       accountDayDataRecord.totalByteSize + Number(dataSubmissionSize);
     if (

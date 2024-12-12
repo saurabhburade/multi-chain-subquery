@@ -165,8 +165,6 @@ export async function handleAccountHourData(
       accountHourDataRecord.totalDAFeesUSD! + feesUSD;
     accountHourDataRecord.totalDataSubmissionCount =
       accountHourDataRecord.totalDataSubmissionCount! + 1;
-    accountHourDataRecord.totalDataSubmissionCount =
-      accountHourDataRecord.totalDataSubmissionCount! + 1;
     accountHourDataRecord.totalByteSize =
       accountHourDataRecord.totalByteSize + Number(dataSubmissionSize);
     if (

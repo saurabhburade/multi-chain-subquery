@@ -69,8 +69,7 @@ export async function handleAccount(
     accountEntity.totalDAFeesUSD = accountEntity.totalDAFeesUSD! + feesUSD;
     accountEntity.totalDataSubmissionCount =
       accountEntity.totalDataSubmissionCount! + 1;
-    accountEntity.totalDataSubmissionCount =
-      accountEntity.totalDataSubmissionCount! + 1;
+
     accountEntity.totalByteSize =
       accountEntity.totalByteSize + Number(dataSubmissionSize);
     if (
