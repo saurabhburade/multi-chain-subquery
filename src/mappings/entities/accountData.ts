@@ -95,7 +95,5 @@ export async function handleAccount(
   accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + Number(feesUSD);
   accountEntity.lastPriceFeedId = priceFeed.id;
   accountEntity.endBlock = block.block.header.number.toNumber();
-  await handleAccountDayData(extrinsicRecord, extrinsic, priceFeed);
-  await handleAccountHourData(extrinsicRecord, extrinsic, priceFeed);
   await accountEntity.save();
 }

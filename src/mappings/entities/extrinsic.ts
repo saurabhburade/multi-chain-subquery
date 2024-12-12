@@ -14,8 +14,14 @@ import {
   handleVectorExecuteMessage,
   handleVectorSendMessage,
 } from "../../utils/extrinsic";
-import { handleDayData } from "../intervals/day/handleDayData";
-import { handleHourData } from "../intervals/hour/handleHourData";
+import {
+  handleAccountDayData,
+  handleDayData,
+} from "../intervals/day/handleDayData";
+import {
+  handleAccountHourData,
+  handleHourData,
+} from "../intervals/hour/handleHourData";
 import { handleAccount } from "./accountData";
 
 export async function handleExtrinsics(
@@ -136,6 +142,8 @@ export async function handleExtrinsics(
       priceFeed
     );
     await handleAccount(extrinsicRecord, substrateExtrinsic, priceFeed);
+    await handleAccountDayData(extrinsicRecord, substrateExtrinsic, priceFeed);
+    await handleAccountHourData(extrinsicRecord, substrateExtrinsic, priceFeed);
     await extrinsicRecord.save();
 
     if (isDataSubmission) {
