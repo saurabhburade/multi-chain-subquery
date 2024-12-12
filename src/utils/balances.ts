@@ -13,9 +13,6 @@ type AccountData = {
 
 export const updateAccounts = async (addresses: string[], timestamp: Date) => {
   try {
-    addresses.forEach((acc) => {
-      logger.info("17 account :: ", [acc]);
-    });
     const accountsInDb: AccountEntity[] = await store.getByFields(
       "AccountEntity",
       [["address", "in", addresses]],

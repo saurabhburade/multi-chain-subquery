@@ -118,10 +118,6 @@ export async function handleExtrinsics(
   collectiveData.totalFeesUSD = collectiveData.totalFeesUSD! + totalFeeUSD;
   // Extrinsics
 
-  logger.info(`Block Extrinsics - ${block.block.extrinsics.length}`);
-  if (totalFee > 0) {
-    logger.info(`Block Extrinsics FEES - ${JSON.stringify(extIdToDetails)}`);
-  }
   for (let index = 0; index < block.block.extrinsics.length; index++) {
     const idx = index;
     const extrinsic = block.block.extrinsics[index];
@@ -289,7 +285,6 @@ export function handleDataSubmission(
     const formattedInspect = formatInspect(ext.inspect());
     const appIdInspect = formattedInspect.find((x) => x.name === "appId");
     // const appName = formattedInspect.find((x) => x.name === "name");
-    logger.info(`formattedInspect - ${JSON.stringify(formattedInspect)}`);
     const appId = appIdInspect ? Number(appIdInspect.value) : 0;
     const dataSubmissionRecord = DataSubmission.create({
       id: idx,
