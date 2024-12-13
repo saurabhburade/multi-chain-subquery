@@ -82,9 +82,8 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
           block,
         });
         logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
+        await blockHandler(block, savedPrice);
       }
-      process.exit(1);
-      // await blockHandler(block, savedPrice);
     } catch (error) {
       logger.error(
         "handleBlock  ERRORRRRRR ::::::::::::::::::" +
