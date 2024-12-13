@@ -79,10 +79,10 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   if (blockRecord === undefined || blockRecord === null) {
     try {
       // if (block.block.header.number.toNumber() === 538) {
-      const savedPrice = await handleNewPriceMinute({
-        block,
-      });
-      logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
+      // const savedPrice = await handleNewPriceMinute({
+      //   block,
+      // });
+      // logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
       // await blockHandler(block, savedPrice);
       // }
     } catch (error) {
