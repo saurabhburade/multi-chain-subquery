@@ -73,7 +73,7 @@ export async function handleExtrinsics(
     collectiveData.totalExtrinsicCount! + block.block.extrinsics.length;
   collectiveData.avgAvailPrice =
     (collectiveData.avgAvailPrice! + priceFeed.availPrice) / 2;
-  collectiveData.avgAvailPrice =
+  collectiveData.avgEthPrice =
     (collectiveData.avgEthPrice! + priceFeed.ethPrice) / 2;
 
   block.events.map((evt, idx) => {
