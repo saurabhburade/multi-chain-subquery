@@ -4,6 +4,9 @@ import { ORACLE_ADDRESS } from "../helper";
 import { CorrectSubstrateBlock } from "../mappingHandlers";
 import fetch from "node-fetch";
 
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 export async function handleNewPriceMinute({
   //   availPrice,
   //   ethPrice,
@@ -21,12 +24,13 @@ export async function handleNewPriceMinute({
   //   availDate: Date;
   block: CorrectSubstrateBlock;
 }): Promise<PriceFeedMinute> {
+  const blockDate = new Date(Number(block.timestamp.getTime()));
+  const minuteId = Math.floor(blockDate.getTime() / 60000);
   try {
-    const blockDate = new Date(Number(block.timestamp.getTime()));
-    const minuteId = Math.floor(blockDate.getTime() / 60000);
     let priceFeedMinute = await PriceFeedMinute.get(minuteId.toString());
 
     if (priceFeedMinute === undefined || priceFeedMinute === null) {
+      await delay(10_000);
       const ife = OneinchABIAbi__factory.createInterface();
       const encodedEth = ife.encodeFunctionData("getRate", [
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
@@ -148,6 +152,12 @@ export async function handleNewPriceMinute({
     // );
     return priceFeedMinute;
   } catch (error) {
+    // const priceFeedLastMinute = await PriceFeedMinute.get(
+    //   (Number(minuteId) - 1).toString()
+    // );
+    // if (priceFeedLastMinute) {
+    //   return priceFeedLastMinute!;
+    // }
     throw error;
   }
 }
