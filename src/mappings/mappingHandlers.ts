@@ -77,11 +77,13 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   if (blockRecord === undefined || blockRecord === null) {
     try {
-      const savedPrice = await handleNewPriceMinute({
-        block,
-      });
-      logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
-      await blockHandler(block, savedPrice);
+      if (block.block.header.number.toNumber() === 538) {
+        const savedPrice = await handleNewPriceMinute({
+          block,
+        });
+        logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
+      }
+      // await blockHandler(block, savedPrice);
     } catch (error) {
       logger.error(
         "handleBlock  ERRORRRRRR ::::::::::::::::::" +
