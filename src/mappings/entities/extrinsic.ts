@@ -66,6 +66,7 @@ export async function handleExtrinsics(
     });
   }
   collectiveData.timestampLast = block.timestamp;
+  collectiveData.endBlock = block.block.header.number.toNumber();
   collectiveData.lastPriceFeedId = priceFeed.id;
   collectiveData.totalBlocksCount = collectiveData.totalBlocksCount! + 1;
 

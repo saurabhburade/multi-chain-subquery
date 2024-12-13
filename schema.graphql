@@ -223,6 +223,7 @@ type CollectiveData @entity {
   timestampLast: Date! @index
   avgAvailPrice: Float
   avgEthPrice: Float
+  endBlock:Float
 }
 type CollectiveDayData @entity {
   id: ID!
