@@ -83,7 +83,7 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
         block,
       });
       // logger.info(`PRICE DATA SAVED ::::::  ${JSON.stringify(savedPrice)}`);
-      // await blockHandler(block, savedPrice);
+      await blockHandler(block, savedPrice);
       // }
     } catch (error) {
       let blockErrorRecord = await BlockError.get(
