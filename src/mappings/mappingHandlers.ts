@@ -147,10 +147,8 @@ export const blockHandler = async (
       logger.info(
         "BLOCK SAVED ::::::::::::::::::" + block.block.header.number.toNumber()
       );
-      await Promise.all([
-        await handleExtrinsics(block, priceFeed),
-        await blockRecord.save(),
-      ]);
+      await handleExtrinsics(block, priceFeed);
+      await blockRecord.save();
     } else {
       await handleExtrinsics(block, priceFeed);
     }
