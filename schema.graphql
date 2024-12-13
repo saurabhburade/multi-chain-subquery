@@ -223,7 +223,7 @@ type CollectiveData @entity {
   timestampLast: Date! @index
   avgAvailPrice: Float
   avgEthPrice: Float
-  endBlock:Float
+  endBlock: Float
 }
 type CollectiveDayData @entity {
   id: ID!
@@ -324,4 +324,9 @@ type CollectiveHourData @entity {
 type AccounToUpdateValue @entity {
   id: ID!
   accounts: [String]!
+}
+type BlockError @entity {
+  id: ID!
+  number: String
+  reason: String
 }

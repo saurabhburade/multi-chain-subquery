@@ -20,6 +20,7 @@ import {
   TransferEntity,
   PriceFeed,
   PriceFeedMinute,
+  BlockError,
 } from "../types";
 import { transferHandler, updateAccounts } from "../utils/balances";
 import { extractAuthor } from "../utils/author";
@@ -85,6 +86,19 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       await blockHandler(block, savedPrice);
       // }
     } catch (error) {
+      let blockErrorRecord = await BlockError.get(
+        blockHeader.number.toString()
+      );
+      if (blockErrorRecord === undefined || blockErrorRecord === null) {
+        blockErrorRecord = BlockError.create({
+          id: blockHeader.number.toString(),
+          number: blockHeader.number.toString(),
+          reason: `${error}`,
+        });
+      }
+      blockErrorRecord.reason =
+        blockErrorRecord.reason + ` ========================== ${error}`;
+      blockErrorRecord.save();
       logger.error(
         "handleBlock  ERRORRRRRR ::::::::::::::::::" +
           block.block.header.number.toNumber() +
@@ -93,6 +107,18 @@ export async function handleBlock(block: CorrectSubstrateBlock): Promise<void> {
       );
       logger.error("handleBlock ERRORRRRRR ::::::::::::::::::" + error);
     }
+  } else {
+    let blockErrorRecord = await BlockError.get(blockHeader.number.toString());
+    if (blockErrorRecord === undefined || blockErrorRecord === null) {
+      blockErrorRecord = BlockError.create({
+        id: blockHeader.number.toString(),
+        number: blockHeader.number.toString(),
+        reason: `Already exist`,
+      });
+    }
+    blockErrorRecord.reason =
+      blockErrorRecord.reason + ` ========================== Already exist`;
+    blockErrorRecord.save();
   }
 }
 
