@@ -53,13 +53,7 @@ export async function handleNewPriceMinute({
       );
       let ethBlockContext = {};
       const ethBlockContextLlama = await blockNumberApi.json();
-      logger.info(
-        `Expected ETH BLOCK::::::  ${JSON.stringify(
-          ethBlockContext
-        )} AT ${Number(
-          block.timestamp.getTime() / 1000
-        )} ::: Date :: ${blockDate}`
-      );
+
       if (false) {
         ethBlockContext = {
           height: Number(ethBlockContextLlama.height),
@@ -83,6 +77,13 @@ export async function handleNewPriceMinute({
         }
         //
       }
+      logger.info(
+        `Expected ETH BLOCK::::::  ${JSON.stringify(
+          ethBlockContext
+        )} AT ${Number(
+          block.timestamp.getTime() / 1000
+        )} ::: Date :: ${blockDate}`
+      );
       const rpcDataEth = await fetch(
         "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
         {
