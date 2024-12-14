@@ -60,7 +60,7 @@ export async function handleNewPriceMinute({
           block.timestamp.getTime() / 1000
         )} ::: Date :: ${blockDate}`
       );
-      if (ethBlockContextLlama.height) {
+      if (false) {
         ethBlockContext = {
           height: Number(ethBlockContextLlama.height),
           timestamp: Number(block.timestamp.getTime() / 1000),
