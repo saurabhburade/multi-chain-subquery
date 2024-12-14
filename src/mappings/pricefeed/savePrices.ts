@@ -54,7 +54,7 @@ export async function handleNewPriceMinute({
       let ethBlockContext = {};
       const ethBlockContextLlama = await blockNumberApi.json();
 
-      if (false) {
+      if (ethBlockContextLlama.height) {
         ethBlockContext = {
           height: Number(ethBlockContextLlama.height),
           timestamp: Number(block.timestamp.getTime() / 1000),
