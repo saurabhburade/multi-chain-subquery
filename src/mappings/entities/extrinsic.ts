@@ -138,6 +138,7 @@ export async function handleExtrinsics(
       extraData,
       priceFeed
     );
+    calls.push(extrinsicRecord);
     await handleAccount(extrinsicRecord, substrateExtrinsic, priceFeed);
     await handleAccountDayData(extrinsicRecord, substrateExtrinsic, priceFeed);
     await handleAccountHourData(extrinsicRecord, substrateExtrinsic, priceFeed);
@@ -151,6 +152,7 @@ export async function handleExtrinsics(
         priceFeed
       );
       await dataSub.save();
+      daSubmissions.push(dataSub);
     }
   }
 
