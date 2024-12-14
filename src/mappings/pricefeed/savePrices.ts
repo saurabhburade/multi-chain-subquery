@@ -42,6 +42,7 @@ export async function handleNewPriceMinute({
       ethBlockContext = {
         height: Number(ethBlockContextLlama.height),
         timestamp: Number(block.timestamp.getTime() / 1000),
+        blockHex: `0x${ethBlockContextLlama.height.toString(16)}`,
       };
     } else {
       const blockNumberApiEtherscan = await fetch(
@@ -73,8 +74,9 @@ export async function handleNewPriceMinute({
     const ethBlockContextEtherescan = await blockNumberApiEtherscan.json();
     if (ethBlockContextEtherescan.result) {
       ethBlockContext = {
-        height: Number(ethBlockContextEtherescan.result),
+        height: ,
         timestamp: Number(block.timestamp.getTime() / 1000),
+        blockHex: `0x${Number(ethBlockContextEtherescan.result).toString(16)}`,
       };
     }
     //
