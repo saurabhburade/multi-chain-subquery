@@ -30,7 +30,7 @@ export async function handleNewPriceMinute({
     let priceFeedMinute = await PriceFeedMinute.get(minuteId.toString());
 
     if (priceFeedMinute === undefined || priceFeedMinute === null) {
-      await delay(1_000);
+      await delay(500);
       const ife = OneinchABIAbi__factory.createInterface();
       const encodedEth = ife.encodeFunctionData("getRate", [
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
@@ -51,8 +51,8 @@ export async function handleNewPriceMinute({
           method: "GET",
         }
       );
-
-      const ethBlockContext = await blockNumberApi.json();
+      let ethBlockContext = {};
+      const ethBlockContextLlama = await blockNumberApi.json();
       logger.info(
         `Expected ETH BLOCK::::::  ${JSON.stringify(
           ethBlockContext
@@ -60,6 +60,29 @@ export async function handleNewPriceMinute({
           block.timestamp.getTime() / 1000
         )} ::: Date :: ${blockDate}`
       );
+      if (ethBlockContextLlama.height) {
+        ethBlockContext = {
+          height: Number(ethBlockContextLlama.height),
+          timestamp: Number(block.timestamp.getTime() / 1000),
+        };
+      } else {
+        const blockNumberApiEtherscan = await fetch(
+          `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
+            block.timestamp.getTime() / 1000
+          )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
+          {
+            method: "GET",
+          }
+        );
+        const ethBlockContextEtherescan = await blockNumberApiEtherscan.json();
+        if (ethBlockContextEtherescan.result) {
+          ethBlockContext = {
+            height: Number(ethBlockContextEtherescan.result.blockNumber),
+            timestamp: Number(block.timestamp.getTime() / 1000),
+          };
+        }
+        //
+      }
       const rpcDataEth = await fetch(
         "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
         {
@@ -74,6 +97,7 @@ export async function handleNewPriceMinute({
                 to: ORACLE_ADDRESS,
                 data: encodedEth,
               },
+              // @ts-ignore
               `0x${ethBlockContext.height.toString(16)}`,
             ],
           }),
@@ -93,6 +117,7 @@ export async function handleNewPriceMinute({
                 to: ORACLE_ADDRESS,
                 data: encodedAvail,
               },
+              // @ts-ignore
               `0x${ethBlockContext.height.toString(16)}`,
             ],
           }),
@@ -124,7 +149,9 @@ export async function handleNewPriceMinute({
       const ethPrice = Number(decodedEth.toString()) / 1e6;
       const availBlock = block.block.header.number.toNumber();
       const availDate = blockDate;
+      // @ts-ignore
       const ethBlock = Number(ethBlockContext.height);
+      // @ts-ignore
       const ethDate = new Date(Number(ethBlockContext.timestamp) * 1000);
       priceFeedMinute = PriceFeedMinute.create({
         id: minuteId.toString(),
