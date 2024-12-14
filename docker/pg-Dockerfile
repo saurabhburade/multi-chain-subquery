@@ -6,10 +6,11 @@ ENV POSTGRES_USER 'postgres'
 ENV POSTGRES_PASSWORD 'postgres'
 ENV POSTGRES_PORT 5434
 
-EXPOSE 5434
 
 # Copy in the load-extensions script
 COPY docker/load-extensions.sh /docker-entrypoint-initdb.d/
 
 # Convert line endings to LF
 RUN sed -i 's/\r$//' /docker-entrypoint-initdb.d/load-extensions.sh && chmod +x /docker-entrypoint-initdb.d/load-extensions.sh
+
+EXPOSE 5434
