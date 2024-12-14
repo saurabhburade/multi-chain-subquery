@@ -26,11 +26,69 @@ export async function handleNewPriceMinute({
 }): Promise<PriceFeedMinute> {
   const blockDate = new Date(Number(block.timestamp.getTime()));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
+  let ethBlockContext = {};
+  try {
+    const blockNumberApi = await fetch(
+      `https://coins.llama.fi/block/ethereum/${Number(
+        block.timestamp.getTime() / 1000
+      )}`,
+      {
+        method: "GET",
+      }
+    );
+    const ethBlockContextLlama = await blockNumberApi.json();
+
+    if (ethBlockContextLlama.height) {
+      ethBlockContext = {
+        height: Number(ethBlockContextLlama.height),
+        timestamp: Number(block.timestamp.getTime() / 1000),
+      };
+    } else {
+      const blockNumberApiEtherscan = await fetch(
+        `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
+          block.timestamp.getTime() / 1000
+        )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
+        {
+          method: "GET",
+        }
+      );
+      const ethBlockContextEtherescan = await blockNumberApiEtherscan.json();
+      if (ethBlockContextEtherescan.result) {
+        ethBlockContext = {
+          height: Number(ethBlockContextEtherescan.result),
+          timestamp: Number(block.timestamp.getTime() / 1000),
+        };
+      }
+      //
+    }
+  } catch (error) {
+    const blockNumberApiEtherscan = await fetch(
+      `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
+        block.timestamp.getTime() / 1000
+      )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
+      {
+        method: "GET",
+      }
+    );
+    const ethBlockContextEtherescan = await blockNumberApiEtherscan.json();
+    if (ethBlockContextEtherescan.result) {
+      ethBlockContext = {
+        height: Number(ethBlockContextEtherescan.result),
+        timestamp: Number(block.timestamp.getTime() / 1000),
+      };
+    }
+    //
+  }
+  logger.info(
+    `Expected ETH BLOCK::::::  ${JSON.stringify(ethBlockContext)} AT ${Number(
+      block.timestamp.getTime() / 1000
+    )} ::: Date :: ${blockDate}`
+  );
   try {
     let priceFeedMinute = await PriceFeedMinute.get(minuteId.toString());
 
     if (priceFeedMinute === undefined || priceFeedMinute === null) {
-      await delay(250);
+      // await delay(250);
       const ife = OneinchABIAbi__factory.createInterface();
       const encodedEth = ife.encodeFunctionData("getRate", [
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
@@ -43,47 +101,6 @@ export async function handleNewPriceMinute({
         false,
       ]);
 
-      const blockNumberApi = await fetch(
-        `https://coins.llama.fi/block/ethereum/${Number(
-          block.timestamp.getTime() / 1000
-        )}`,
-        {
-          method: "GET",
-        }
-      );
-      let ethBlockContext = {};
-      const ethBlockContextLlama = await blockNumberApi.json();
-
-      if (ethBlockContextLlama.height) {
-        ethBlockContext = {
-          height: Number(ethBlockContextLlama.height),
-          timestamp: Number(block.timestamp.getTime() / 1000),
-        };
-      } else {
-        const blockNumberApiEtherscan = await fetch(
-          `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
-            block.timestamp.getTime() / 1000
-          )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
-          {
-            method: "GET",
-          }
-        );
-        const ethBlockContextEtherescan = await blockNumberApiEtherscan.json();
-        if (ethBlockContextEtherescan.result) {
-          ethBlockContext = {
-            height: Number(ethBlockContextEtherescan.result),
-            timestamp: Number(block.timestamp.getTime() / 1000),
-          };
-        }
-        //
-      }
-      logger.info(
-        `Expected ETH BLOCK::::::  ${JSON.stringify(
-          ethBlockContext
-        )} AT ${Number(
-          block.timestamp.getTime() / 1000
-        )} ::: Date :: ${blockDate}`
-      );
       const rpcDataEth = await fetch(
         "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
         {
