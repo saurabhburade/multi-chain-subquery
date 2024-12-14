@@ -24,7 +24,7 @@ network:
     - 272000-280500
 dataSources:
   - name: main
-    startBlock: 1
+    startBlock: 703183
     kind: substrate/Runtime
     mapping:
       file: ./dist/index.js
