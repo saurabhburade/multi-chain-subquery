@@ -30,7 +30,7 @@ export async function handleNewPriceMinute({
     let priceFeedMinute = await PriceFeedMinute.get(minuteId.toString());
 
     if (priceFeedMinute === undefined || priceFeedMinute === null) {
-      await delay(500);
+      await delay(250);
       const ife = OneinchABIAbi__factory.createInterface();
       const encodedEth = ife.encodeFunctionData("getRate", [
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
