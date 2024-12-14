@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./docker/pg-Dockerfile
     ports:
-      - 5432:5432
+      - 5434:5434
     volumes:
       - .data/postgres:/var/lib/postgresql/data
     environment:
@@ -50,17 +50,18 @@ services:
       DB_PASS: postgres
       DB_DATABASE: postgres
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: 5434
     volumes:
       - ./:/app
     command:
       - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
-      - --multi-chain
-      - --db-schema=multi-chain
+      - --multi-chain-dev
+      - --db-schema=multi-chain-dev
       - -f=app/avail.yaml
       - --allow-schema-migration
       - --unfinalized-blocks=false
       - --unsafe
+      - --batch-size=20
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
@@ -71,14 +72,14 @@ services:
   graphql-engine:
     image: subquerynetwork/subql-query:latest
     ports:
-      - 3000:3000
+      - 4000:4000
     restart: unless-stopped
     environment:
       DB_USER: postgres
       DB_PASS: postgres
       DB_DATABASE: postgres
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: 5434
     command:
-      - --name=multi-chain
+      - --name=multi-chain-dev
       - --playground
