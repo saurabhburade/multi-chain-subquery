@@ -55,6 +55,7 @@ services:
       - ./:/app
     command:
       - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
+      - reindex
       - --multi-chain
       - --db-schema=multi-chain
       - -f=app/avail.yaml
