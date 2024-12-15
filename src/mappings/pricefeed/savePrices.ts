@@ -170,11 +170,11 @@ export async function handleNewPriceMinute({
       );
       const ethResultRaw = await rpcDataEth.json();
       const availResultRaw = await rpcDataAvail.json();
-      if (ethResultRaw) {
-        logger.info(
-          `RAW ETH Price Feed::::::  ${JSON.stringify(ethResultRaw)}`
-        );
-      }
+      // if (ethResultRaw) {
+      //   logger.info(
+      //     `RAW ETH Price Feed::::::  ${JSON.stringify(ethResultRaw)}`
+      //   );
+      // }
       const decodedEth = ife.decodeFunctionResult(
         "getRate",
         ethResultRaw.result

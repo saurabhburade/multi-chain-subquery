@@ -63,7 +63,6 @@ services:
       - --batch-size=60
       - --unsafe
       - --worker=3
-      - --disable-historical=false
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
