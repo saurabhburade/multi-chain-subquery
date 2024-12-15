@@ -207,7 +207,7 @@ export async function handleNewPriceMinute({
     if (priceFeedLastMinute) {
       return priceFeedLastMinute!;
     } else {
-      return handleNewPriceMinute({ block });
+      return await handleNewPriceMinute({ block });
       throw error;
     }
   }
