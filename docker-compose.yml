@@ -64,7 +64,7 @@ services:
       - --batch-size=30
       - --unsafe
       - --worker=3
-      - --historical=height
+      - --historical="height"
       - --disable-historical=false
       - --targetHeight=90115
 
