@@ -65,7 +65,7 @@ services:
       - --unsafe
       - --worker=3
       - --disable-historical=false
-      - --targetHeight=90116
+      - --targetHeight=90115
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
