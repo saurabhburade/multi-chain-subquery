@@ -1,3 +1,5 @@
+"use strict";
+
 import { SubstrateExtrinsic } from "@subql/types";
 import { AccountEntity, Extrinsic, PriceFeedMinute } from "../../types";
 import { CorrectSubstrateBlock } from "../mappingHandlers";

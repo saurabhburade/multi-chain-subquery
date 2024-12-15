@@ -1,3 +1,5 @@
+"use strict";
+
 import { SubstrateExtrinsic } from "@subql/types";
 import {
   CollectiveData,
@@ -113,6 +115,10 @@ export async function handleExtrinsics(
       totalFee += Number(details.feeRounded); // Or use parseFloat(details.fee) for decimals
     }
   }
+  Object.keys(extIdToDetails).forEach((key: string) => {
+    delete extIdToDetails[Number(key)];
+  });
+
   const totalFeeUSD = totalFee * priceFeed.availPrice;
   collectiveData.totalFees = collectiveData.totalFees! + totalFee;
   collectiveData.totalFeesAvail = collectiveData.totalFeesAvail! + totalFee;
@@ -139,9 +145,19 @@ export async function handleExtrinsics(
       priceFeed
     );
     calls.push(extrinsicRecord);
-    await handleAccount(extrinsicRecord, substrateExtrinsic, priceFeed);
-    await handleAccountDayData(extrinsicRecord, substrateExtrinsic, priceFeed);
-    await handleAccountHourData(extrinsicRecord, substrateExtrinsic, priceFeed);
+    await Promise.all([
+      await handleAccount(extrinsicRecord, substrateExtrinsic, priceFeed),
+      await handleAccountDayData(
+        extrinsicRecord,
+        substrateExtrinsic,
+        priceFeed
+      ),
+      await handleAccountHourData(
+        extrinsicRecord,
+        substrateExtrinsic,
+        priceFeed
+      ),
+    ]);
     await extrinsicRecord.save();
 
     if (isDataSubmission) {
@@ -156,20 +172,23 @@ export async function handleExtrinsics(
     }
   }
 
+  let daFees = 0;
+  let daFeesUSD = 0;
+  let daSize = 0;
   if (daSubmissions.length > 0) {
-    const daFees = daSubmissions.reduce((sum, das) => {
+    daFees = daSubmissions.reduce((sum, das) => {
       if (das.fees) {
         sum = sum + das.fees || 0;
       }
       return sum;
     }, 0);
-    const daSize = daSubmissions.reduce((sum, das) => {
+    daSize = daSubmissions.reduce((sum, das) => {
       if (das.byteSize) {
         sum = sum + das.byteSize || 0;
       }
       return sum;
     }, 0);
-    const daFeesUSD = daFees * priceFeed.availPrice;
+    daFeesUSD = daFees * priceFeed.availPrice;
     collectiveData.totalDataBlocksCount =
       collectiveData.totalDataBlocksCount! + 1;
     collectiveData.totalDAFees = collectiveData.totalDAFees! + daFees;
@@ -178,9 +197,31 @@ export async function handleExtrinsics(
       collectiveData.totalDataSubmissionCount! + daSubmissions.length;
     collectiveData.totalByteSize = collectiveData.totalByteSize! + daSize || 0;
   }
-  await handleDayData(block, priceFeed, calls, daSubmissions);
-  await handleHourData(block, priceFeed, calls, daSubmissions);
+  await Promise.all([
+    await handleDayData(
+      block,
+      priceFeed,
+      { totalFee },
+      {
+        daSubmissionsLength: daSubmissions.length,
+        daFees,
+        daSize,
+      }
+    ),
+    await handleHourData(
+      block,
+      priceFeed,
+      { totalFee },
+      {
+        daSubmissionsLength: daSubmissions.length,
+        daFees,
+        daSize,
+      }
+    ),
+  ]);
   await collectiveData.save();
+  daSubmissions.length = 0;
+  calls.length = 0;
   //   await Promise.all([
   //     store.bulkCreate("Extrinsic", calls),
   //     store.bulkCreate("DataSubmission", daSubmissions),
