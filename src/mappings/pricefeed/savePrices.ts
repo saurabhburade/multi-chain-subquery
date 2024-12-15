@@ -30,7 +30,7 @@ export async function handleNewPriceMinute({
   try {
     const blockNumberApi = await fetch(
       `https://coins.llama.fi/block/ethereum/${Number(
-        block.timestamp.getTime() / 1000
+        Math.floor(block.timestamp.getTime() / 1000)
       )}`,
       {
         method: "GET",
@@ -45,9 +45,10 @@ export async function handleNewPriceMinute({
         blockHex: `0x${ethBlockContextLlama.height.toString(16)}`,
       };
     } else {
+      await delay(1_000);
       const blockNumberApiEtherscan = await fetch(
         `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
-          block.timestamp.getTime() / 1000
+          Math.floor(block.timestamp.getTime() / 1000)
         )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
         {
           method: "GET",
@@ -63,9 +64,10 @@ export async function handleNewPriceMinute({
       //
     }
   } catch (error) {
+    await delay(1_000);
     const blockNumberApiEtherscan = await fetch(
       `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
-        block.timestamp.getTime() / 1000
+        Math.floor(block.timestamp.getTime() / 1000)
       )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
       {
         method: "GET",
@@ -205,6 +207,7 @@ export async function handleNewPriceMinute({
     if (priceFeedLastMinute) {
       return priceFeedLastMinute!;
     } else {
+      return handleNewPriceMinute({ block });
       throw error;
     }
   }
