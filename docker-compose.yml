@@ -60,9 +60,9 @@ services:
       - -f=app/avail.yaml
       - --allow-schema-migration
       - --unfinalized-blocks=false
-      - --batch-size=60
+      - --batch-size=40
       - --unsafe
-      - --worker=3
+      - --workers=3
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
