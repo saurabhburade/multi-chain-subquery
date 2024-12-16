@@ -98,7 +98,7 @@ export async function handleNewPriceMinute({
         method: "GET",
       }
     );
-    const ethBlockContextEtherescan = await blockNumberApiEtherscan.json();
+    const ethBlockContextEtherescan: any = await blockNumberApiEtherscan.json();
     if (ethBlockContextEtherescan.result) {
       ethBlockContext = {
         height: Number(ethBlockContextEtherescan.result),
