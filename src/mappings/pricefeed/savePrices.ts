@@ -60,7 +60,7 @@ export async function handleNewPriceMinute({
         method: "GET",
       }
     );
-    const ethBlockContextLlama = await blockNumberApi.json();
+    const ethBlockContextLlama: any = await blockNumberApi.json();
 
     if (ethBlockContextLlama.height) {
       ethBlockContext = {
@@ -78,7 +78,8 @@ export async function handleNewPriceMinute({
           method: "GET",
         }
       );
-      const ethBlockContextEtherescan = await blockNumberApiEtherscan.json();
+      const ethBlockContextEtherescan: any =
+        await blockNumberApiEtherscan.json();
       if (ethBlockContextEtherescan.result) {
         ethBlockContext = {
           height: Number(ethBlockContextEtherescan.result),
@@ -169,8 +170,8 @@ export async function handleNewPriceMinute({
           }),
         }
       );
-      const ethResultRaw = await rpcDataEth.json();
-      const availResultRaw = await rpcDataAvail.json();
+      const ethResultRaw: any = await rpcDataEth.json();
+      const availResultRaw: any = await rpcDataAvail.json();
       // if (ethResultRaw) {
       //   logger.info(
       //     `RAW ETH Price Feed::::::  ${JSON.stringify(ethResultRaw)}`
