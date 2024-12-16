@@ -158,7 +158,7 @@ export async function handleExtrinsics(
         priceFeed
       ),
     ]);
-    // await extrinsicRecord.save();
+    await extrinsicRecord.save();
 
     if (isDataSubmission) {
       const dataSub = handleDataSubmission(
@@ -167,7 +167,7 @@ export async function handleExtrinsics(
         extraData,
         priceFeed
       );
-      //   await dataSub.save();
+      await dataSub.save();
       daSubmissions.push(dataSub);
     }
   }
@@ -198,8 +198,6 @@ export async function handleExtrinsics(
     collectiveData.totalByteSize = collectiveData.totalByteSize! + daSize || 0;
   }
   await Promise.all([
-    store.bulkCreate("Extrinsic", calls),
-    store.bulkCreate("DataSubmission", daSubmissions),
     await handleDayData(
       block,
       priceFeed,
@@ -213,6 +211,7 @@ export async function handleExtrinsics(
     await handleHourData(
       block,
       priceFeed,
+
       { totalFee },
       {
         daSubmissionsLength: daSubmissions.length,
