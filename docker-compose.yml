@@ -62,6 +62,7 @@ services:
       - --unfinalized-blocks=false
       - --batch-size=30
       - --unsafe
+      - --workers=3
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
