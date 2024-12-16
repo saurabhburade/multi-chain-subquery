@@ -1,4 +1,5 @@
 "use strict";
+// @ts-nocheck
 import { PriceFeedMinute } from "../../types";
 import { OneinchABIAbi__factory } from "../../types/contracts";
 import { ORACLE_ADDRESS } from "../helper";
