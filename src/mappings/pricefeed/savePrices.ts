@@ -4,7 +4,7 @@ import { PriceFeedMinute } from "../../types";
 import { OneinchABIAbi__factory } from "../../types/contracts";
 import { ORACLE_ADDRESS } from "../helper";
 import { CorrectSubstrateBlock } from "../mappingHandlers";
-
+import fetch from "node-fetch"
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
