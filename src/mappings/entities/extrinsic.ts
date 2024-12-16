@@ -220,8 +220,8 @@ export async function handleExtrinsics(
         daSize,
       }
     ),
+    await collectiveData.save(),
   ]);
-  await collectiveData.save();
   daSubmissions.length = 0;
   calls.length = 0;
   //   await Promise.all([
