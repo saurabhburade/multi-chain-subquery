@@ -6,30 +6,8 @@ import { ORACLE_ADDRESS } from "../helper";
 import { CorrectSubstrateBlock } from "../mappingHandlers";
 import fetch from "node-fetch";
 
-function delay(ms: number): Promise<void> {
-  let timeout: any = null; // Holds the reference to the timeout
-
-  // Return a Promise that resolves after the specified delay
-  return new Promise<void>((resolve, reject) => {
-    timeout = setTimeout(() => {
-      resolve();
-      timeout = null; // Nullify the timeout reference after resolution
-    }, ms);
-
-    // Optional: handle rejection in case the delay is cancelled
-    // (e.g., through a custom "cancel" mechanism or timeout)
-    const cancel = () => {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null; // Nullify the timeout reference after cancellation
-        reject(new Error("Delay was cancelled"));
-      }
-    };
-
-    // Ensure the cancel function is returned (for custom cancellation)
-    // This can be extended if you need a cancellation mechanism in the future
-    return cancel;
-  });
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 export async function handleNewPriceMinute({
   //   availPrice,
