@@ -4,7 +4,7 @@ import { PriceFeedMinute } from "../../types";
 import { OneinchABIAbi__factory } from "../../types/contracts";
 import { ORACLE_ADDRESS } from "../helper";
 import { CorrectSubstrateBlock } from "../mappingHandlers";
-import fetch from "node-fetch";
+import axios from "axios";
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -30,15 +30,13 @@ export async function handleNewPriceMinute({
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   let ethBlockContext = {};
   try {
-    const blockNumberApi = await fetch(
-      `https://coins.llama.fi/block/ethereum/${Number(
-        Math.floor(block.timestamp.getTime() / 1000)
-      )}`,
-      {
-        method: "GET",
-      }
-    );
-    const ethBlockContextLlama: any = await blockNumberApi.json();
+    const ethBlockContextLlama: any = (
+      await axios.get(
+        `https://coins.llama.fi/block/ethereum/${Number(
+          Math.floor(block.timestamp.getTime() / 1000)
+        )}`
+      )
+    ).data;
 
     if (ethBlockContextLlama.height) {
       ethBlockContext = {
@@ -48,16 +46,14 @@ export async function handleNewPriceMinute({
       };
     } else {
       await delay(1_000);
-      const blockNumberApiEtherscan = await fetch(
-        `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
-          Math.floor(block.timestamp.getTime() / 1000)
-        )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
-        {
-          method: "GET",
-        }
-      );
-      const ethBlockContextEtherescan: any =
-        await blockNumberApiEtherscan.json();
+      const ethBlockContextEtherescan: any = (
+        await axios.get(
+          `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
+            Math.floor(block.timestamp.getTime() / 1000)
+          )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`
+        )
+      ).data;
+
       if (ethBlockContextEtherescan.result) {
         ethBlockContext = {
           height: Number(ethBlockContextEtherescan.result),
@@ -68,15 +64,13 @@ export async function handleNewPriceMinute({
     }
   } catch (error) {
     await delay(1_000);
-    const blockNumberApiEtherscan = await fetch(
-      `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
-        Math.floor(block.timestamp.getTime() / 1000)
-      )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
-      {
-        method: "GET",
-      }
-    );
-    const ethBlockContextEtherescan: any = await blockNumberApiEtherscan.json();
+    const ethBlockContextEtherescan: any = (
+      await axios.get(
+        `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
+          Math.floor(block.timestamp.getTime() / 1000)
+        )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`
+      )
+    ).data;
     if (ethBlockContextEtherescan.result) {
       ethBlockContext = {
         height: Number(ethBlockContextEtherescan.result),
@@ -108,12 +102,10 @@ export async function handleNewPriceMinute({
         false,
       ]);
 
-      const rpcDataEth = await fetch(
-        "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
-        {
-          method: "POST",
-          headers: {},
-          body: JSON.stringify({
+      const rpcDataEth = (
+        await axios.post(
+          "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
+          JSON.stringify({
             id: 1,
             jsonrpc: "2.0",
             method: "eth_call",
@@ -125,15 +117,13 @@ export async function handleNewPriceMinute({
               // @ts-ignore
               `0x${ethBlockContext.height.toString(16)}`,
             ],
-          }),
-        }
-      );
-      const rpcDataAvail = await fetch(
-        "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
-        {
-          method: "POST",
-          headers: {},
-          body: JSON.stringify({
+          })
+        )
+      ).data;
+      const rpcDataAvail = (
+        await axios.post(
+          "https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArT8p5S52UM0rgz3Qb99bmtcIwWxtHwR75vAuivZK8k9",
+          JSON.stringify({
             id: 1,
             jsonrpc: "2.0",
             method: "eth_call",
@@ -145,11 +135,11 @@ export async function handleNewPriceMinute({
               // @ts-ignore
               `0x${ethBlockContext.height.toString(16)}`,
             ],
-          }),
-        }
-      );
-      const ethResultRaw: any = await rpcDataEth.json();
-      const availResultRaw: any = await rpcDataAvail.json();
+          })
+        )
+      ).data;
+      const ethResultRaw: any = rpcDataEth;
+      const availResultRaw: any = rpcDataAvail;
       // if (ethResultRaw) {
       //   logger.info(
       //     `RAW ETH Price Feed::::::  ${JSON.stringify(ethResultRaw)}`

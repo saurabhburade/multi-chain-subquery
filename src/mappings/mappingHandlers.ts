@@ -37,7 +37,6 @@ import { AccounToUpdateValue } from "../types/models/AccounToUpdateValue";
 import { ethers } from "ethers";
 import { OneinchABIAbi__factory } from "../types/contracts";
 
-import fetch from "node-fetch";
 import { handleNewPriceMinute } from "./pricefeed/savePrices";
 import { handleExtrinsics } from "./entities/extrinsic";
 
