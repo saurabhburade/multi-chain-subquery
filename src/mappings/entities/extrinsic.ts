@@ -158,7 +158,7 @@ export async function handleExtrinsics(
         priceFeed
       ),
     ]);
-    await extrinsicRecord.save();
+    // await extrinsicRecord.save();
 
     if (isDataSubmission) {
       const dataSub = handleDataSubmission(
@@ -167,7 +167,7 @@ export async function handleExtrinsics(
         extraData,
         priceFeed
       );
-      await dataSub.save();
+      // await dataSub.save();
       daSubmissions.push(dataSub);
     }
   }
@@ -221,12 +221,12 @@ export async function handleExtrinsics(
     ),
     await collectiveData.save(),
   ]);
+  await Promise.all([
+    store.bulkCreate("Extrinsic", calls),
+    store.bulkCreate("DataSubmission", daSubmissions),
+  ]);
   daSubmissions.length = 0;
   calls.length = 0;
-  //   await Promise.all([
-  //     store.bulkCreate("Extrinsic", calls),
-  //     store.bulkCreate("DataSubmission", daSubmissions),
-  //   ]);
 }
 
 export function handleCall(
