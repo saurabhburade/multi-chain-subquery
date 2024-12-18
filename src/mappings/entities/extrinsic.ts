@@ -115,9 +115,6 @@ export async function handleExtrinsics(
       totalFee += Number(details.feeRounded); // Or use parseFloat(details.fee) for decimals
     }
   }
-  Object.keys(extIdToDetails).forEach((key: string) => {
-    delete extIdToDetails[Number(key)];
-  });
 
   const totalFeeUSD = totalFee * priceFeed.availPrice;
   collectiveData.totalFees = collectiveData.totalFees! + totalFee;
@@ -171,6 +168,9 @@ export async function handleExtrinsics(
       daSubmissions.push(dataSub);
     }
   }
+  Object.keys(extIdToDetails).forEach((key: string) => {
+    delete extIdToDetails[Number(key)];
+  });
 
   let daFees = 0;
   let daFeesUSD = 0;
