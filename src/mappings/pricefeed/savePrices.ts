@@ -4,7 +4,7 @@ import { PriceFeedMinute } from "../../types";
 import { OneinchABIAbi__factory } from "../../types/contracts";
 import { ORACLE_ADDRESS } from "../helper";
 import { CorrectSubstrateBlock } from "../mappingHandlers";
-import fetch from "node-fetch"
+import fetch from "node-fetch";
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -66,23 +66,39 @@ export async function handleNewPriceMinute({
       //
     }
   } catch (error) {
-    await delay(1_000);
-    const blockNumberApiEtherscan = await fetch(
-      `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
-        Math.floor(block.timestamp.getTime() / 1000)
-      )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
-      {
-        method: "GET",
+    try {
+      await delay(1_000);
+      const blockNumberApiEtherscan = await fetch(
+        `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Number(
+          Math.floor(block.timestamp.getTime() / 1000)
+        )}&closest=before&apikey=QW2D5TW4VG4BYK8I5G6WMUCA9ENWGAHUYJ`,
+        {
+          method: "GET",
+        }
+      );
+      const ethBlockContextEtherescan: any =
+        await blockNumberApiEtherscan.json();
+      if (ethBlockContextEtherescan.result) {
+        ethBlockContext = {
+          height: Number(ethBlockContextEtherescan.result),
+          timestamp: Number(block.timestamp.getTime() / 1000),
+          blockHex: `0x${Number(ethBlockContextEtherescan.result).toString(
+            16
+          )}`,
+        };
       }
-    );
-    const ethBlockContextEtherescan: any = await blockNumberApiEtherscan.json();
-    if (ethBlockContextEtherescan.result) {
-      ethBlockContext = {
-        height: Number(ethBlockContextEtherescan.result),
-        timestamp: Number(block.timestamp.getTime() / 1000),
-        blockHex: `0x${Number(ethBlockContextEtherescan.result).toString(16)}`,
-      };
+    } catch (error) {
+      const priceFeedLastMinute = await PriceFeedMinute.get(
+        (Number(minuteId) - 1).toString()
+      );
+      if (priceFeedLastMinute) {
+        return priceFeedLastMinute!;
+      } else {
+        return await handleNewPriceMinute({ block });
+        throw error;
+      }
     }
+
     //
   }
   logger.info(
