@@ -88,15 +88,15 @@ export async function handleNewPriceMinute({
         };
       }
     } catch (error) {
-      const priceFeedLastMinute = await PriceFeedMinute.get(
-        (Number(minuteId) - 1).toString()
-      );
-      if (priceFeedLastMinute) {
-        return priceFeedLastMinute!;
-      } else {
-        return await handleNewPriceMinute({ block });
-        throw error;
-      }
+      // const priceFeedLastMinute = await PriceFeedMinute.get(
+      //   (Number(minuteId) - 1).toString()
+      // );
+      // if (priceFeedLastMinute) {
+      //   return priceFeedLastMinute!;
+      // } else {
+      return await handleNewPriceMinute({ block });
+      // throw error;
+      // }
     }
 
     //
@@ -219,14 +219,14 @@ export async function handleNewPriceMinute({
     // );
     return priceFeedMinute;
   } catch (error) {
-    const priceFeedLastMinute = await PriceFeedMinute.get(
-      (Number(minuteId) - 1).toString()
-    );
-    if (priceFeedLastMinute) {
-      return priceFeedLastMinute!;
-    } else {
-      return await handleNewPriceMinute({ block });
-      throw error;
-    }
+    // const priceFeedLastMinute = await PriceFeedMinute.get(
+    //   (Number(minuteId) - 1).toString()
+    // );
+    // if (priceFeedLastMinute) {
+    //   return priceFeedLastMinute!;
+    // } else {
+    return await handleNewPriceMinute({ block });
+    //   throw error;
+    // }
   }
 }

@@ -104,7 +104,7 @@ export async function handleAccountDayData(
   let dataSubmissionSize =
     methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
   let accountDayDataRecord = await AccountDayData.get(
-    extrinsicRecord.signer.toString()
+    `${extrinsicRecord.signer.toString()}-dayId-${dayId}`
   );
   const oneMbInBytes = 1_048_576;
   const feesPerMb =

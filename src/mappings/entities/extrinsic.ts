@@ -115,9 +115,6 @@ export async function handleExtrinsics(
       totalFee += Number(details.feeRounded); // Or use parseFloat(details.fee) for decimals
     }
   }
-  Object.keys(extIdToDetails).forEach((key: string) => {
-    delete extIdToDetails[Number(key)];
-  });
 
   const totalFeeUSD = totalFee * priceFeed.availPrice;
   collectiveData.totalFees = collectiveData.totalFees! + totalFee;
@@ -158,7 +155,7 @@ export async function handleExtrinsics(
         priceFeed
       ),
     ]);
-    await extrinsicRecord.save();
+    // await extrinsicRecord.save();
 
     if (isDataSubmission) {
       const dataSub = handleDataSubmission(
@@ -167,10 +164,13 @@ export async function handleExtrinsics(
         extraData,
         priceFeed
       );
-      await dataSub.save();
+      // await dataSub.save();
       daSubmissions.push(dataSub);
     }
   }
+  Object.keys(extIdToDetails).forEach((key: string) => {
+    delete extIdToDetails[Number(key)];
+  });
 
   let daFees = 0;
   let daFeesUSD = 0;
@@ -221,12 +221,12 @@ export async function handleExtrinsics(
     ),
     await collectiveData.save(),
   ]);
+  await Promise.all([
+    store.bulkCreate("Extrinsic", calls),
+    store.bulkCreate("DataSubmission", daSubmissions),
+  ]);
   daSubmissions.length = 0;
   calls.length = 0;
-  //   await Promise.all([
-  //     store.bulkCreate("Extrinsic", calls),
-  //     store.bulkCreate("DataSubmission", daSubmissions),
-  //   ]);
 }
 
 export function handleCall(
