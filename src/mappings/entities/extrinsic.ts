@@ -328,6 +328,18 @@ export function handleDataSubmission(
     let dataSubmissionSize =
       methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
     const formattedInspect = formatInspect(ext.inspect());
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
     const appIdInspect = formattedInspect.find((x) => x.name === "appId");
     // const appName = formattedInspect.find((x) => x.name === "name");
     const appId = appIdInspect ? Number(appIdInspect.value) : 0;
