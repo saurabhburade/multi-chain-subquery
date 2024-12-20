@@ -265,7 +265,117 @@ export function handleCall(
     //         i === 0 ? handleVectorSendMessage(a) : a.toString()
     //       )
     //     : methodData.args.map((a) => a.toString());
-
+    if (methodData.method === "createApplicationKey") {
+      const formattedInspect = formatInspect(ext.inspect());
+      const formattedInspectNoData =
+        formattedInspect?.length > 0
+          ? formattedInspect.filter((d) => d.name !== "data")
+          : [];
+      const appIdInspect = formattedInspect.find((x) => x.name === "appId");
+      // const appName = formattedInspect.find((x) => x.name === "name");
+      const appId = appIdInspect ? Number(appIdInspect.value) : 0;
+      // const newRawKey = KeyDataRaw.create({
+      //   id: appId.toString() || ext.hash.toString(),
+      // });
+      // newRawKey.data = JSON.stringify(formattedInspectNoData);
+      // await newRawKey.save();
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+      logger.info(
+        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
+      );
+    }
     const extrinsicRecord = Extrinsic.create({
       id: ext.hash.toString(), // txHash - Transaction hash
       blockId: block.block.header.number.toString(), // blockId - Block height/number
