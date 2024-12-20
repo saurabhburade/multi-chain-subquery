@@ -28,7 +28,13 @@ export async function handleNewPriceMinute({
   const blockDate = new Date(Number(block.timestamp.getTime()));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   let ethBlockContext = {};
+  // SKIP PRICES AT MINUTEID 28695899 - 28695894
+
   try {
+    if (minuteId > 28695894 && minuteId < 28695899) {
+      const priceFeedMinute = await PriceFeedMinute.get("28695894");
+      return priceFeedMinute!;
+    }
     const blockNumberApi = await fetch(
       `https://coins.llama.fi/block/ethereum/${Number(
         Math.floor(block.timestamp.getTime() / 1000)
