@@ -5,7 +5,6 @@ import {
   CollectiveData,
   DataSubmission,
   Extrinsic,
-  KeyDataRaw,
   PriceFeedMinute,
   TransferEntity,
 } from "../../types";
@@ -136,209 +135,98 @@ export async function handleExtrinsics(
       block,
     };
     const extraData = extIdToDetails[idx];
-        if (methodData.method === "createApplicationKey") {
-          const formattedInspect = formatInspect(extrinsic.inspect());
-          const formattedInspectNoData =
-            formattedInspect?.length > 0
-              ? formattedInspect.filter((d) => d.name !== "data")
-              : [];
-          const appIdInspect = formattedInspect.find((x) => x.name === "appId");
-          // const appName = formattedInspect.find((x) => x.name === "name");
-          const appId = appIdInspect ? Number(appIdInspect.value) : 0;
-          // const newRawKey = KeyDataRaw.create({
-          //   id: appId.toString() || ext.hash.toString(),
-          // });
-          // newRawKey.data = JSON.stringify(formattedInspectNoData);
-          // await newRawKey.save();
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-          logger.info(
-            `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-          );
-        }
-    // const extrinsicRecord = handleCall(
-    //   `${blockNumberString}-${idx}`,
-    //   substrateExtrinsic,
-    //   extraData,
-    //   priceFeed
-    // );
-    // calls.push(extrinsicRecord);
-    // await Promise.all([
-    //   await handleAccount(extrinsicRecord, substrateExtrinsic, priceFeed),
-    //   await handleAccountDayData(
-    //     extrinsicRecord,
-    //     substrateExtrinsic,
-    //     priceFeed
-    //   ),
-    //   await handleAccountHourData(
-    //     extrinsicRecord,
-    //     substrateExtrinsic,
-    //     priceFeed
-    //   ),
-    // ]);
+    const extrinsicRecord = handleCall(
+      `${blockNumberString}-${idx}`,
+      substrateExtrinsic,
+      extraData,
+      priceFeed
+    );
+    calls.push(extrinsicRecord);
+    await Promise.all([
+      await handleAccount(extrinsicRecord, substrateExtrinsic, priceFeed),
+      await handleAccountDayData(
+        extrinsicRecord,
+        substrateExtrinsic,
+        priceFeed
+      ),
+      await handleAccountHourData(
+        extrinsicRecord,
+        substrateExtrinsic,
+        priceFeed
+      ),
+    ]);
     // await extrinsicRecord.save();
 
-    // if (isDataSubmission) {
-    //   const dataSub = handleDataSubmission(
-    //     `${blockNumberString}-${idx}`,
-    //     substrateExtrinsic,
-    //     extraData,
-    //     priceFeed
-    //   );
-    //   // await dataSub.save();
-    //   daSubmissions.push(dataSub);
-    // }
+    if (isDataSubmission) {
+      const dataSub = handleDataSubmission(
+        `${blockNumberString}-${idx}`,
+        substrateExtrinsic,
+        extraData,
+        priceFeed
+      );
+      // await dataSub.save();
+      daSubmissions.push(dataSub);
+    }
   }
-  // Object.keys(extIdToDetails).forEach((key: string) => {
-  //   delete extIdToDetails[Number(key)];
-  // });
+  Object.keys(extIdToDetails).forEach((key: string) => {
+    delete extIdToDetails[Number(key)];
+  });
 
-  // let daFees = 0;
-  // let daFeesUSD = 0;
-  // let daSize = 0;
-  // if (daSubmissions.length > 0) {
-  //   daFees = daSubmissions.reduce((sum, das) => {
-  //     if (das.fees) {
-  //       sum = sum + das.fees || 0;
-  //     }
-  //     return sum;
-  //   }, 0);
-  //   daSize = daSubmissions.reduce((sum, das) => {
-  //     if (das.byteSize) {
-  //       sum = sum + das.byteSize || 0;
-  //     }
-  //     return sum;
-  //   }, 0);
-  //   daFeesUSD = daFees * priceFeed.availPrice;
-  //   collectiveData.totalDataBlocksCount =
-  //     collectiveData.totalDataBlocksCount! + 1;
-  //   collectiveData.totalDAFees = collectiveData.totalDAFees! + daFees;
-  //   collectiveData.totalDAFeesUSD = collectiveData.totalDAFeesUSD! + daFeesUSD;
-  //   collectiveData.totalDataSubmissionCount =
-  //     collectiveData.totalDataSubmissionCount! + daSubmissions.length;
-  //   collectiveData.totalByteSize = collectiveData.totalByteSize! + daSize || 0;
-  // }
-  // await Promise.all([
-  //   await handleDayData(
-  //     block,
-  //     priceFeed,
-  //     { totalFee },
-  //     {
-  //       daSubmissionsLength: daSubmissions.length,
-  //       daFees,
-  //       daSize,
-  //     }
-  //   ),
-  //   await handleHourData(
-  //     block,
-  //     priceFeed,
+  let daFees = 0;
+  let daFeesUSD = 0;
+  let daSize = 0;
+  if (daSubmissions.length > 0) {
+    daFees = daSubmissions.reduce((sum, das) => {
+      if (das.fees) {
+        sum = sum + das.fees || 0;
+      }
+      return sum;
+    }, 0);
+    daSize = daSubmissions.reduce((sum, das) => {
+      if (das.byteSize) {
+        sum = sum + das.byteSize || 0;
+      }
+      return sum;
+    }, 0);
+    daFeesUSD = daFees * priceFeed.availPrice;
+    collectiveData.totalDataBlocksCount =
+      collectiveData.totalDataBlocksCount! + 1;
+    collectiveData.totalDAFees = collectiveData.totalDAFees! + daFees;
+    collectiveData.totalDAFeesUSD = collectiveData.totalDAFeesUSD! + daFeesUSD;
+    collectiveData.totalDataSubmissionCount =
+      collectiveData.totalDataSubmissionCount! + daSubmissions.length;
+    collectiveData.totalByteSize = collectiveData.totalByteSize! + daSize || 0;
+  }
+  await Promise.all([
+    await handleDayData(
+      block,
+      priceFeed,
+      { totalFee },
+      {
+        daSubmissionsLength: daSubmissions.length,
+        daFees,
+        daSize,
+      }
+    ),
+    await handleHourData(
+      block,
+      priceFeed,
 
-  //     { totalFee },
-  //     {
-  //       daSubmissionsLength: daSubmissions.length,
-  //       daFees,
-  //       daSize,
-  //     }
-  //   ),
-  //   await collectiveData.save(),
-  // ]);
-  // await Promise.all([
-  //   store.bulkCreate("Extrinsic", calls),
-  //   store.bulkCreate("DataSubmission", daSubmissions),
-  // ]);
-  // daSubmissions.length = 0;
-  // calls.length = 0;
+      { totalFee },
+      {
+        daSubmissionsLength: daSubmissions.length,
+        daFees,
+        daSize,
+      }
+    ),
+    await collectiveData.save(),
+  ]);
+  await Promise.all([
+    store.bulkCreate("Extrinsic", calls),
+    store.bulkCreate("DataSubmission", daSubmissions),
+  ]);
+  daSubmissions.length = 0;
+  calls.length = 0;
 }
 
 export function handleCall(
@@ -440,117 +328,21 @@ export function handleDataSubmission(
     let dataSubmissionSize =
       methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
     const formattedInspect = formatInspect(ext.inspect());
-    const formattedInspectNoData =
-      formattedInspect?.length > 0
-        ? formattedInspect.filter((d) => d.name !== "data")
-        : [];
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
+    logger.info(`formattedInspect : ${JSON.stringify(formattedInspect)}`);
     const appIdInspect = formattedInspect.find((x) => x.name === "appId");
     // const appName = formattedInspect.find((x) => x.name === "name");
     const appId = appIdInspect ? Number(appIdInspect.value) : 0;
-    if (methodData.method === "createApplicationKey") {
-      // const newRawKey = KeyDataRaw.create({
-      //   id: appId.toString() || ext.hash.toString(),
-      // });
-      // newRawKey.data = JSON.stringify(formattedInspectNoData);
-      // await newRawKey.save();
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-      logger.info(
-        `formattedInspect : ${JSON.stringify(formattedInspectNoData)}`
-      );
-    }
-
     const dataSubmissionRecord = DataSubmission.create({
       id: idx,
       appId,

@@ -107,11 +107,11 @@ export async function handleNewPriceMinute({
 
     //
   }
-  // logger.info(
-  //   `Expected ETH BLOCK::::::  ${JSON.stringify(ethBlockContext)} AT ${Number(
-  //     block.timestamp.getTime() / 1000
-  //   )} ::: Date :: ${blockDate}`
-  // );
+  logger.info(
+    `Expected ETH BLOCK::::::  ${JSON.stringify(ethBlockContext)} AT ${Number(
+      block.timestamp.getTime() / 1000
+    )} ::: Date :: ${blockDate}`
+  );
   try {
     let priceFeedMinute = await PriceFeedMinute.get(minuteId.toString());
 
@@ -185,12 +185,12 @@ export async function handleNewPriceMinute({
         availResultRaw.result
       );
 
-      // if (decodedEth) {
-      //   logger.info(`New ETH Price Feed::::::  ${decodedEth.toString()}`);
-      // }
-      // if (decodedAvail) {
-      //   logger.info(`New AVAIL Price Feed::::::  ${decodedAvail.toString()}`);
-      // }
+      if (decodedEth) {
+        logger.info(`New ETH Price Feed::::::  ${decodedEth.toString()}`);
+      }
+      if (decodedAvail) {
+        logger.info(`New AVAIL Price Feed::::::  ${decodedAvail.toString()}`);
+      }
       const availPrice = Number(decodedAvail.toString()) / 1e6;
       const ethPrice = Number(decodedEth.toString()) / 1e6;
       const availBlock = block.block.header.number.toNumber();
@@ -210,14 +210,14 @@ export async function handleNewPriceMinute({
       });
       priceFeedMinute.availPrice = availPrice;
       priceFeedMinute.ethPrice = ethPrice;
-      // logger.info(
-      //   `SAVING NEW PRICE MINUTE ::::  ${priceFeedMinute.ethPrice.toString()} :: ID:: ${minuteId} :: AT:: ${blockDate}`
-      // );
+      logger.info(
+        `SAVING NEW PRICE MINUTE ::::  ${priceFeedMinute.ethPrice.toString()} :: ID:: ${minuteId} :: AT:: ${blockDate}`
+      );
       await priceFeedMinute.save();
     } else {
-      // logger.info(
-      //   `PRICE ALREADY EXIST ::::  ${priceFeedMinute.ethPrice.toString()} :: ID:: ${minuteId} :: AT:: ${blockDate}`
-      // );
+      logger.info(
+        `PRICE ALREADY EXIST ::::  ${priceFeedMinute.ethPrice.toString()} :: ID:: ${minuteId} :: AT:: ${blockDate}`
+      );
     }
 
     // logger.info(
