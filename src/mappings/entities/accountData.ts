@@ -1,3 +1,5 @@
+"use strict";
+
 import { SubstrateExtrinsic } from "@subql/types";
 import { AccountEntity, Extrinsic, PriceFeedMinute } from "../../types";
 import { CorrectSubstrateBlock } from "../mappingHandlers";
@@ -96,10 +98,10 @@ export async function handleAccount(
     accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + Number(feesUSD);
     accountEntity.lastPriceFeedId = priceFeed.id;
     accountEntity.endBlock = block.block.header.number.toNumber();
-    logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(accountEntity)}`);
+    // logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(accountEntity)}`);
 
     await accountEntity.save();
   } catch (error) {
-    logger.error(`New ACCOUNT SAVE::::::  ${error}`);
+    logger.error(`New ACCOUNT SAVE ERROR::::::  ${error}`);
   }
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 import {
   EventRecord,
   Digest,
@@ -35,7 +37,6 @@ import { AccounToUpdateValue } from "../types/models/AccounToUpdateValue";
 import { ethers } from "ethers";
 import { OneinchABIAbi__factory } from "../types/contracts";
 
-import fetch from "node-fetch";
 import { handleNewPriceMinute } from "./pricefeed/savePrices";
 import { handleExtrinsics } from "./entities/extrinsic";
 
@@ -151,9 +152,9 @@ export const blockHandler = async (
         }
       }
 
-      logger.info(
-        `BLOCK HANDLE :::::::::::::::::: FEES ${JSON.stringify(fees)}`
-      );
+      // logger.info(
+      //   `BLOCK HANDLE :::::::::::::::::: FEES ${JSON.stringify(fees)}`
+      // );
       blockRecord = Block.create({
         id: blockHeader.number.toString(),
         number: blockHeader.number.toNumber(),

@@ -20,8 +20,6 @@ network:
     - 'wss://zeref-api.slowops.xyz/ws'
   chaintypes:
     file: ./dist/chaintypes.js
-  bypassBlocks:
-    - 272000-280500
 dataSources:
   - name: main
     startBlock: 1

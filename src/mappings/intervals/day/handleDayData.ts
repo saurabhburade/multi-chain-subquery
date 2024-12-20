@@ -11,8 +11,12 @@ import { CorrectSubstrateBlock } from "../../mappingHandlers";
 export async function handleDayData(
   block: CorrectSubstrateBlock,
   priceFeed: PriceFeedMinute,
-  extrinsics: Extrinsic[],
-  daSubmissions: DataSubmission[]
+  { totalFee }: { totalFee: number },
+  {
+    daSubmissionsLength,
+    daFees,
+    daSize,
+  }: { daSubmissionsLength: number; daFees: number; daSize: number }
 ) {
   const blockDate = new Date(Number(block.timestamp.getTime()));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
@@ -52,42 +56,31 @@ export async function handleDayData(
     (dayDataRecord.avgEthPrice! + priceFeed.ethPrice) / 2;
   dayDataRecord.endBlock = block.block.header.number.toNumber();
   dayDataRecord.timestampLast = block.timestamp;
-  // FEES calc
-  let totalFee = 0; // Initialize totalFee as a BigInt to handle large numbers
-
-  // Iterate through each extrinsic ID and add the fee to totalFee
-  for (let index = 0; index < extrinsics.length; index++) {
-    const details = extrinsics[index];
-    if (details.fees) {
-      // Convert fee to BigInt (or Number if fee is smaller)
-      totalFee += Number(details.fees); // Or use parseFloat(details.fee) for decimals
-    }
-  }
 
   const totalFeeUSD = totalFee * priceFeed.availPrice;
   dayDataRecord.totalFees = dayDataRecord.totalFees! + totalFee;
   dayDataRecord.totalFeesAvail = dayDataRecord.totalFeesAvail! + totalFee;
   dayDataRecord.totalFeesUSD = dayDataRecord.totalFeesUSD! + totalFeeUSD;
-  if (daSubmissions.length > 0) {
-    const daFees = daSubmissions.reduce((sum, das) => {
-      if (das.fees) {
-        sum = sum + das.fees || 0;
-      }
-      return sum;
-    }, 0);
-    const daSize = daSubmissions.reduce((sum, das) => {
-      if (das.byteSize) {
-        sum = sum + das.byteSize || 0;
-      }
-      return sum;
-    }, 0);
+  if (daSubmissionsLength > 0) {
+    // const daFees = daSubmissions.reduce((sum, das) => {
+    //   if (das.fees) {
+    //     sum = sum + das.fees || 0;
+    //   }
+    //   return sum;
+    // }, 0);
+    // const daSize = daSubmissions.reduce((sum, das) => {
+    //   if (das.byteSize) {
+    //     sum = sum + das.byteSize || 0;
+    //   }
+    //   return sum;
+    // }, 0);
     const daFeesUSD = daFees * priceFeed.availPrice;
     dayDataRecord.totalDataBlocksCount =
       dayDataRecord.totalDataBlocksCount! + 1;
     dayDataRecord.totalDAFees = dayDataRecord.totalDAFees! + daFees;
     dayDataRecord.totalDAFeesUSD = dayDataRecord.totalDAFeesUSD! + daFeesUSD;
     dayDataRecord.totalDataSubmissionCount =
-      dayDataRecord.totalDataSubmissionCount! + daSubmissions.length;
+      dayDataRecord.totalDataSubmissionCount! + daSubmissionsLength;
     dayDataRecord.totalByteSize = dayDataRecord.totalByteSize! + daSize || 0;
   }
   dayDataRecord.totalBlocksCount = dayDataRecord.totalBlocksCount! + 1;
@@ -111,7 +104,7 @@ export async function handleAccountDayData(
   let dataSubmissionSize =
     methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
   let accountDayDataRecord = await AccountDayData.get(
-    extrinsicRecord.signer.toString()
+    `${extrinsicRecord.signer.toString()}-dayId-${dayId}`
   );
   const oneMbInBytes = 1_048_576;
   const feesPerMb =
