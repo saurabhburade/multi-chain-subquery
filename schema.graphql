@@ -192,6 +192,30 @@ type AccountEntity @entity {
   startBlock: Float
   endBlock: Float
 }
+type AppEntity @entity {
+  id: ID!
+  createdAt: Date!
+  updatedAt: Date!
+  timestampCreation: Date! @index
+  owner: String! @index
+  totalByteSize: Int! @index
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesAvail: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  avgAvailPrice: Float
+  avgEthPrice: Float
+  accountDayData: [AccountDayData] @derivedFrom(field: "account")
+  startBlock: Float
+  endBlock: Float
+}
 
 type DataSubmission @entity {
   id: ID!
@@ -329,4 +353,8 @@ type BlockError @entity {
   id: ID!
   number: String
   reason: String
+}
+type KeyDataRaw @entity {
+  id: ID!
+  data: String
 }
