@@ -12,7 +12,16 @@ import { handleAccountHourData } from "../intervals/hour/handleHourData";
 export async function handleApp(
   extrinsicRecord: Extrinsic,
   extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
-  priceFeed: PriceFeedMinute
+  priceFeed: PriceFeedMinute,
+  extraDetails:
+    | {
+        nbEvents: number;
+        success?: boolean | undefined;
+        fee?: string | undefined;
+        feeRounded?: number | undefined;
+        events?: any[];
+      }
+    | undefined
 ) {
   const block = extrinsic.block as CorrectSubstrateBlock;
   const ext = extrinsic.extrinsic;
@@ -24,6 +33,7 @@ export async function handleApp(
   const filteredRaw = formattedInspect.map((x) => {
     return { ...x, data: "" };
   });
+  const raw = extraDetails ? extraDetails.events : [];
   const appIdInspect = formattedInspect.find((x) => x.name === "appId");
   const nameInspect = formattedInspect.find((x) => x.name === "key");
   const appNameKey = nameInspect
@@ -38,7 +48,7 @@ export async function handleApp(
       id: appId.toString(),
       name: appNameKey,
       owner: ext.signer.toString(),
-      creationRawData: JSON.stringify(filteredRaw),
+      creationRawData: JSON.stringify(raw),
       createdAt: block.timestamp,
       timestampCreation: extrinsicRecord.timestamp,
       timestampLast: extrinsicRecord.timestamp,

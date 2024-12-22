@@ -44,6 +44,7 @@ export async function handleExtrinsics(
       success?: boolean;
       fee?: string;
       feeRounded?: number;
+      events?: any[];
     };
   } = {};
   let collectiveData = await CollectiveData.get("1");
@@ -92,6 +93,19 @@ export async function handleExtrinsics(
         };
       }
       extIdToDetails[relatedExtrinsicIndex].nbEvents += 1;
+      if (!extIdToDetails[relatedExtrinsicIndex].events) {
+        extIdToDetails[relatedExtrinsicIndex].events = [];
+      }
+      extIdToDetails[relatedExtrinsicIndex].events!.push(evt.event.toJSON());
+
+      logger.info(`PUSH EVENT`);
+      logger.info(`PUSH EVENT`);
+      logger.info(`PUSH EVENT`);
+      logger.info(`PUSH EVENT ${JSON.stringify(evt.event)}`);
+      logger.info(`PUSH EVENT`);
+      logger.info(`PUSH EVENT`);
+      logger.info(`PUSH EVENT`);
+      logger.info(`PUSH EVENT`);
       if (key === "transactionPayment.TransactionFeePaid") {
         let fees = getFeesFromEvent(evt.event.data.toJSON() as any[]);
         extIdToDetails[relatedExtrinsicIndex].fee = (
@@ -155,7 +169,12 @@ export async function handleExtrinsics(
         substrateExtrinsic,
         priceFeed
       ),
-      await handleApp(extrinsicRecord, substrateExtrinsic, priceFeed),
+      await handleApp(
+        extrinsicRecord,
+        substrateExtrinsic,
+        priceFeed,
+        extraData
+      ),
     ]);
     // await extrinsicRecord.save();
 
