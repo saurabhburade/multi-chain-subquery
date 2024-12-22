@@ -44,9 +44,11 @@ export async function handleApp(
   let appRecord = await AppEntity.get(appId.toString());
   // Handle new app
   if (appRecord === null || appRecord === undefined) {
-    const [newAppName, newAppOwner, newAppId] = JSON.parse(
-      extraDetails!.events![0]
-    );
+    const [
+      newAppName = undefined,
+      newAppOwner = undefined,
+      newAppId = undefined,
+    ] = extraDetails!.events ? extraDetails!.events![0] : [];
     appRecord = AppEntity.create({
       id: newAppId ? newAppId?.toString() : appId.toString(),
       name: newAppName || appNameKey,
