@@ -13,7 +13,7 @@ export async function handleApp(
   const ext = extrinsic.extrinsic;
   const methodData = ext.method;
 
-  if (methodData.method === "createApplicationKey") {
+  if (methodData.section === "dataAvailability") {
     let dataSubmissionSize =
       methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
     const formattedInspect = formatInspect(ext.inspect());
