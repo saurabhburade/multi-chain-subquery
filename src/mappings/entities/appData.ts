@@ -44,12 +44,14 @@ export async function handleApp(
   let appRecord = await AppEntity.get(appId.toString());
   // Handle new app
   if (appRecord === null || appRecord === undefined) {
-    const [newAppName, newAppOwner, newAppId] = extraDetails!.events![0];
+    const [newAppName, newAppOwner, newAppId] = JSON.parse(
+      extraDetails!.events![0]
+    );
     appRecord = AppEntity.create({
       id: newAppId ? newAppId?.toString() : appId.toString(),
       name: newAppName || appNameKey,
       owner: newAppOwner ? newAppOwner : ext.signer.toString(),
-      creationRawData: raw?.toString(),
+      creationRawData: JSON.stringify(raw),
       createdAt: block.timestamp,
       timestampCreation: extrinsicRecord.timestamp,
       timestampLast: extrinsicRecord.timestamp,
