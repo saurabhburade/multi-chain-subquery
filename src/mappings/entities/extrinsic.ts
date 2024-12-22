@@ -97,7 +97,7 @@ export async function handleExtrinsics(
         extIdToDetails[relatedExtrinsicIndex].events = [];
       }
       if (evt.event.method === "createApplicationKey") {
-        extIdToDetails[relatedExtrinsicIndex].events!.push(evt.event.toJSON());
+        extIdToDetails[relatedExtrinsicIndex].events!.push(evt.event.data.toJSON());
         logger.info(`PUSH EVENT`);
         logger.info(`PUSH EVENT`);
         logger.info(`PUSH EVENT`);
