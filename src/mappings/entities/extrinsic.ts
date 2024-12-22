@@ -96,9 +96,23 @@ export async function handleExtrinsics(
       if (!extIdToDetails[relatedExtrinsicIndex].events) {
         extIdToDetails[relatedExtrinsicIndex].events = [];
       }
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
       if (evt.event.method === "createApplicationKey") {
-        extIdToDetails[relatedExtrinsicIndex].events!.push(evt.event.data.toJSON());
-        logger.info(`PUSH EVENT`);
+        logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
+        extIdToDetails[relatedExtrinsicIndex].events!.push(
+          evt.event.data.toJSON()
+        );
         logger.info(`PUSH EVENT`);
         logger.info(`PUSH EVENT`);
         logger.info(`PUSH EVENT ${JSON.stringify(evt.event)}`);
@@ -107,7 +121,7 @@ export async function handleExtrinsics(
         logger.info(`PUSH EVENT`);
         logger.info(`PUSH EVENT`);
       } else {
-        extIdToDetails[relatedExtrinsicIndex].events!.push([]);
+        extIdToDetails[relatedExtrinsicIndex].events!.push({});
       }
 
       if (key === "transactionPayment.TransactionFeePaid") {
