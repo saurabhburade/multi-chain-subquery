@@ -1,6 +1,7 @@
 import { SubstrateExtrinsic } from "@subql/types";
 import {
   AccountHourData,
+  AppEntity,
   CollectiveDayData,
   CollectiveHourData,
   DataSubmission,
@@ -82,7 +83,9 @@ export async function handleHourData(
 export async function handleAccountHourData(
   extrinsicRecord: Extrinsic,
   extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
-  priceFeed: PriceFeedMinute
+  priceFeed: PriceFeedMinute,
+  type: number = 0,
+  appRecord?: AppEntity
 ) {
   const block = extrinsic.block as CorrectSubstrateBlock;
 
@@ -93,7 +96,16 @@ export async function handleAccountHourData(
   const hourId = Math.floor(blockDate.getTime() / 3600000); // Divide by milliseconds in an hour
   const prevHourId = hourId - 1; // Divide by milliseconds in an hour
   const ext = extrinsic.extrinsic;
-
+  const id =
+    type === 1
+      ? `${extrinsicRecord.signer.toString()}-hourId-${hourId}-${appRecord!.id}`
+      : `${extrinsicRecord.signer.toString()}-hourId-${hourId}`;
+  const idPrev =
+    type === 1
+      ? `${extrinsicRecord.signer.toString()}-hourId-${prevHourId}-${
+          appRecord!.id
+        }`
+      : `${extrinsicRecord.signer.toString()}-hourId-${prevHourId}`;
   const methodData = ext.method;
   let dataSubmissionSize =
     methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
@@ -105,13 +117,13 @@ export async function handleAccountHourData(
     (extrinsicRecord.feesRounded! / dataSubmissionSize) * oneMbInBytes;
   if (accountHourDataRecord === undefined || accountHourDataRecord === null) {
     accountHourDataRecord = AccountHourData.create({
-      id: `${extrinsicRecord.signer.toString()}-hourId-${hourId}`,
+      id: id,
       accountId: extrinsicRecord.signer.toString(),
 
       timestampLast: extrinsicRecord.timestamp,
       totalByteSize: 0,
       timestampStart: extrinsicRecord.timestamp,
-      prevHourDataId: `${extrinsicRecord.signer.toString()}-hourId-${prevHourId}`,
+      prevHourDataId: idPrev,
       avgAvailPrice: extrinsicRecord.availPrice,
       avgEthPrice: extrinsicRecord.ethPrice,
       totalDAFees: 0,
@@ -127,7 +139,12 @@ export async function handleAccountHourData(
       lastPriceFeedId: priceFeed.id,
       endBlock: 0,
       startBlock: block.block.header.number.toNumber(),
+      type,
     });
+  }
+  if (type === 1) {
+    accountHourDataRecord.appId = appRecord!.id;
+    accountHourDataRecord.attachedAppId = appRecord!.id;
   }
   accountHourDataRecord.timestampLast = extrinsicRecord.timestamp;
 

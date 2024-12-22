@@ -1,6 +1,8 @@
 import { SubstrateExtrinsic } from "@subql/types";
 import {
   AccountDayData,
+  AppDayData,
+  AppEntity,
   CollectiveDayData,
   DataSubmission,
   Extrinsic,
@@ -90,7 +92,9 @@ export async function handleDayData(
 export async function handleAccountDayData(
   extrinsicRecord: Extrinsic,
   extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
-  priceFeed: PriceFeedMinute
+  priceFeed: PriceFeedMinute,
+  type: number = 0,
+  appRecord?: AppEntity
 ) {
   const block = extrinsic.block as CorrectSubstrateBlock;
 
@@ -99,25 +103,31 @@ export async function handleAccountDayData(
   const dayId = Math.floor(blockDate.getTime() / 86400000);
   const prevDayId = dayId - 1;
   const ext = extrinsic.extrinsic;
-
+  const id =
+    type === 1
+      ? `${extrinsicRecord.signer.toString()}-dayId-${dayId}-${appRecord!.id}`
+      : `${extrinsicRecord.signer.toString()}-dayId-${dayId}`;
+  const idPrev =
+    type === 1
+      ? `${extrinsicRecord.signer.toString()}-dayId-${prevDayId}-${
+          appRecord!.id
+        }`
+      : `${extrinsicRecord.signer.toString()}-dayId-${prevDayId}`;
   const methodData = ext.method;
   let dataSubmissionSize =
     methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
-  let accountDayDataRecord = await AccountDayData.get(
-    `${extrinsicRecord.signer.toString()}-dayId-${dayId}`
-  );
+  let accountDayDataRecord = await AccountDayData.get(id);
   const oneMbInBytes = 1_048_576;
   const feesPerMb =
     (extrinsicRecord.feesRounded! / dataSubmissionSize) * oneMbInBytes;
   if (accountDayDataRecord === undefined || accountDayDataRecord === null) {
     accountDayDataRecord = AccountDayData.create({
-      id: `${extrinsicRecord.signer.toString()}-dayId-${dayId}`,
+      id: id,
       accountId: extrinsicRecord.signer.toString(),
-
       timestampLast: extrinsicRecord.timestamp,
       totalByteSize: 0,
       timestampStart: extrinsicRecord.timestamp,
-      prevDayDataId: `${extrinsicRecord.signer.toString()}-dayId-${prevDayId}`,
+      prevDayDataId: idPrev,
       avgAvailPrice: extrinsicRecord.availPrice,
       avgEthPrice: extrinsicRecord.ethPrice,
       totalDAFees: 0,
@@ -133,7 +143,12 @@ export async function handleAccountDayData(
       lastPriceFeedId: priceFeed.id,
       endBlock: 0,
       startBlock: block.block.header.number.toNumber(),
+      type,
     });
+  }
+  if (type === 1) {
+    accountDayDataRecord.appId = appRecord!.id;
+    accountDayDataRecord.attachedAppId = appRecord!.id;
   }
   accountDayDataRecord.timestampLast = extrinsicRecord.timestamp;
 

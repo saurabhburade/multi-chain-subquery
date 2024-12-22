@@ -145,7 +145,6 @@ export async function handleExtrinsics(
     calls.push(extrinsicRecord);
     await Promise.all([
       await handleAccount(extrinsicRecord, substrateExtrinsic, priceFeed),
-      await handleApp(extrinsicRecord, substrateExtrinsic, priceFeed),
       await handleAccountDayData(
         extrinsicRecord,
         substrateExtrinsic,
@@ -156,6 +155,7 @@ export async function handleExtrinsics(
         substrateExtrinsic,
         priceFeed
       ),
+      await handleApp(extrinsicRecord, substrateExtrinsic, priceFeed),
     ]);
     // await extrinsicRecord.save();
 
@@ -222,7 +222,6 @@ export async function handleExtrinsics(
       }
     ),
     await collectiveData.save(),
-    
   ]);
   await Promise.all([
     store.bulkCreate("Extrinsic", calls),
