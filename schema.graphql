@@ -161,6 +161,9 @@ type TransferEntity @entity {
 
 type AccountEntity @entity {
   id: ID!
+  type: Int
+  attachedAppId: String
+  app: AppEntity
   validator: Boolean
   validatorSessionParticipated: Int
   amount: String
@@ -212,9 +215,59 @@ type AppEntity @entity {
   timestampLast: Date! @index
   avgAvailPrice: Float
   avgEthPrice: Float
-  accountDayData: [AccountDayData] @derivedFrom(field: "account")
+  appDayData: [AppDayData] @derivedFrom(field: "app")
+  appHourData: [AppHourData] @derivedFrom(field: "app")
   startBlock: Float
   endBlock: Float
+  name: String!
+}
+type AppDayData @entity {
+  id: ID!
+  app: AppEntity! @index
+  totalByteSize: Int! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesAvail: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  timestampStart: Date! @index
+  startBlock: Float
+  endBlock: Float
+  avgAvailPrice: Float
+  avgEthPrice: Float
+  prevDayData: AppDayData
+}
+type AppHourData @entity {
+  id: ID!
+  totalByteSize: Int! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesAvail: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  timestampStart: Date! @index
+  startBlock: Float
+  endBlock: Float
+  avgAvailPrice: Float
+  avgEthPrice: Float
+  prevHourData: AccountHourData
+  app: AppEntity! @index
 }
 
 type DataSubmission @entity {
@@ -274,6 +327,9 @@ type CollectiveDayData @entity {
 }
 type AccountDayData @entity {
   id: ID!
+  type: Int
+  attachedAppId: String
+  app: AppEntity
   totalByteSize: Int! @index
   totalFees: Float
   totalDAFees: Float
@@ -298,6 +354,9 @@ type AccountDayData @entity {
 }
 type AccountHourData @entity {
   id: ID!
+  type: Int
+  attachedAppId: String
+  app: AppEntity
   totalByteSize: Int! @index
   totalFees: Float
   totalDAFees: Float
