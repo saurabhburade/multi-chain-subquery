@@ -96,12 +96,14 @@ export async function handleExtrinsics(
       if (!extIdToDetails[relatedExtrinsicIndex].events) {
         extIdToDetails[relatedExtrinsicIndex].events = [];
       }
-      extIdToDetails[relatedExtrinsicIndex].events!.push(evt.event.toJSON());
+      extIdToDetails[relatedExtrinsicIndex].events!.push(
+        evt.event.data.toJSON()
+      );
 
       logger.info(`PUSH EVENT`);
       logger.info(`PUSH EVENT`);
       logger.info(`PUSH EVENT`);
-      logger.info(`PUSH EVENT ${JSON.stringify(evt.event)}`);
+      logger.info(`PUSH EVENT ${JSON.stringify(evt.event.data.toJSON())}`);
       logger.info(`PUSH EVENT`);
       logger.info(`PUSH EVENT`);
       logger.info(`PUSH EVENT`);
