@@ -99,9 +99,7 @@ export async function handleExtrinsics(
 
       if (evt.event.method === "ApplicationKeyCreated") {
         logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-        extIdToDetails[relatedExtrinsicIndex].events!.push(
-          evt.event.data.toJSON()
-        );
+        extIdToDetails[relatedExtrinsicIndex].events!.push(evt.event.toJSON());
         logger.info(`PUSH EVENT`);
         logger.info(`PUSH EVENT`);
         logger.info(`PUSH EVENT ${JSON.stringify(evt.event)}`);
@@ -110,7 +108,7 @@ export async function handleExtrinsics(
         logger.info(`PUSH EVENT`);
         logger.info(`PUSH EVENT`);
       } else {
-        extIdToDetails[relatedExtrinsicIndex].events!.push({});
+        // extIdToDetails[relatedExtrinsicIndex].events!.push({});
       }
 
       if (key === "transactionPayment.TransactionFeePaid") {
