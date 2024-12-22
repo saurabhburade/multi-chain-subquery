@@ -41,54 +41,52 @@ export async function handleApp(
     : "Unknown";
   // const appName = formattedInspect.find((x) => x.name === "name");
   const appId = appIdInspect ? Number(appIdInspect.value) : -1;
-  let appRecord = await AppEntity.get(appId.toString());
-  // Handle new app
-  if (appRecord === null || appRecord === undefined) {
-    const [
-      newAppName = undefined,
-      newAppOwner = undefined,
-      newAppId = undefined,
-    ] =
-      extraDetails!.events && extraDetails!.events?.length > 0
-        ? extraDetails!.events![0]
-        : [];
-    appRecord = AppEntity.create({
-      id: newAppId ? newAppId?.toString() : appId.toString(),
-      name: newAppName || appNameKey,
-      owner: newAppOwner ? newAppOwner : ext.signer.toString(),
-      creationRawData: JSON.stringify(raw),
-      createdAt: block.timestamp,
-      timestampCreation: extrinsicRecord.timestamp,
-      timestampLast: extrinsicRecord.timestamp,
-      totalByteSize: 0,
-      updatedAt: extrinsicRecord.timestamp,
-      avgAvailPrice: extrinsicRecord.availPrice,
-      avgEthPrice: extrinsicRecord.ethPrice,
-      totalDAFees: 0,
-      totalDAFeesUSD: 0,
-      totalDataSubmissionCount: 0,
-      totalDataBlocksCount: 0,
-      totalBlocksCount: 0,
-      totalExtrinsicCount: 0,
-      totalFeesAvail: 0,
-      totalFeesUSD: 0,
-      totalTransferCount: 0,
-      lastPriceFeedId: priceFeed.id,
-      endBlock: 0,
-      startBlock: block.block.header.number.toNumber(),
-    });
-  }
-  appRecord.timestampLast = extrinsicRecord.timestamp;
 
-  appRecord.updatedAt = extrinsicRecord.timestamp;
-  appRecord.avgAvailPrice =
-    (appRecord.avgAvailPrice! + priceFeed.availPrice) / 2;
-  appRecord.avgEthPrice = (appRecord.avgEthPrice! + priceFeed.ethPrice) / 2;
-  const extrinsicType = `${methodData.section}_${methodData.method}`;
-  const isDataSubmission = extrinsicType === "dataAvailability_submitData";
-  const fees = Number(extrinsicRecord.fees);
-  const feesUSD = fees * priceFeed.availPrice;
   if (methodData.section === "dataAvailability") {
+    let appRecord = await AppEntity.get(appId.toString());
+    // Handle new app
+    if (appRecord === null || appRecord === undefined) {
+      const [newAppName = null, newAppOwner = null, newAppId = null] =
+        extraDetails!.events && extraDetails!.events?.length > 0
+          ? extraDetails!.events[0]
+          : [];
+      appRecord = AppEntity.create({
+        id: newAppId ? newAppId?.toString() : appId.toString(),
+        name: newAppName || appNameKey,
+        owner: newAppOwner ? newAppOwner : ext.signer.toString(),
+        creationRawData: JSON.stringify(raw),
+        createdAt: block.timestamp,
+        timestampCreation: extrinsicRecord.timestamp,
+        timestampLast: extrinsicRecord.timestamp,
+        totalByteSize: 0,
+        updatedAt: extrinsicRecord.timestamp,
+        avgAvailPrice: extrinsicRecord.availPrice,
+        avgEthPrice: extrinsicRecord.ethPrice,
+        totalDAFees: 0,
+        totalDAFeesUSD: 0,
+        totalDataSubmissionCount: 0,
+        totalDataBlocksCount: 0,
+        totalBlocksCount: 0,
+        totalExtrinsicCount: 0,
+        totalFeesAvail: 0,
+        totalFeesUSD: 0,
+        totalTransferCount: 0,
+        lastPriceFeedId: priceFeed.id,
+        endBlock: 0,
+        startBlock: block.block.header.number.toNumber(),
+      });
+    }
+    appRecord.timestampLast = extrinsicRecord.timestamp;
+
+    appRecord.updatedAt = extrinsicRecord.timestamp;
+    appRecord.avgAvailPrice =
+      (appRecord.avgAvailPrice! + priceFeed.availPrice) / 2;
+    appRecord.avgEthPrice = (appRecord.avgEthPrice! + priceFeed.ethPrice) / 2;
+    const extrinsicType = `${methodData.section}_${methodData.method}`;
+    const isDataSubmission = extrinsicType === "dataAvailability_submitData";
+    const fees = Number(extrinsicRecord.fees);
+    const feesUSD = fees * priceFeed.availPrice;
+
     if (isDataSubmission) {
       appRecord.totalDAFees =
         appRecord.totalDAFees! + Number(extrinsicRecord.fees)!;
@@ -105,39 +103,40 @@ export async function handleApp(
         appRecord.totalDataBlocksCount = appRecord.totalDataBlocksCount! + 1;
       }
     }
+
+    if (
+      appRecord.endBlock!.toString() !=
+      block.block.header.number.toNumber().toString()
+    ) {
+      appRecord.totalBlocksCount = appRecord.totalBlocksCount! + 1;
+    }
+    appRecord.totalExtrinsicCount = appRecord.totalExtrinsicCount! + 1;
+    appRecord.totalFeesAvail =
+      appRecord.totalFeesAvail! + Number(extrinsicRecord.fees!);
+    appRecord.totalFeesUSD = appRecord.totalFeesUSD! + Number(feesUSD);
+    appRecord.lastPriceFeedId = priceFeed.id;
+    appRecord.endBlock = block.block.header.number.toNumber();
+    // logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(appRecord)}`);
+    // APP ACCOUNT HANDLE WITH   type: number = 0,  appRecord?: AppEntity
+    await Promise.all([
+      await handleAppDayData(extrinsicRecord, extrinsic, priceFeed, appRecord),
+      await handleAppHourData(extrinsicRecord, extrinsic, priceFeed, appRecord),
+      await handleAccount(extrinsicRecord, extrinsic, priceFeed, 1, appRecord),
+      await handleAccountDayData(
+        extrinsicRecord,
+        extrinsic,
+        priceFeed,
+        1,
+        appRecord
+      ),
+      await handleAccountHourData(
+        extrinsicRecord,
+        extrinsic,
+        priceFeed,
+        1,
+        appRecord
+      ),
+      await appRecord.save(),
+    ]);
   }
-  if (
-    appRecord.endBlock!.toString() !=
-    block.block.header.number.toNumber().toString()
-  ) {
-    appRecord.totalBlocksCount = appRecord.totalBlocksCount! + 1;
-  }
-  appRecord.totalExtrinsicCount = appRecord.totalExtrinsicCount! + 1;
-  appRecord.totalFeesAvail =
-    appRecord.totalFeesAvail! + Number(extrinsicRecord.fees!);
-  appRecord.totalFeesUSD = appRecord.totalFeesUSD! + Number(feesUSD);
-  appRecord.lastPriceFeedId = priceFeed.id;
-  appRecord.endBlock = block.block.header.number.toNumber();
-  // logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(appRecord)}`);
-  // APP ACCOUNT HANDLE WITH   type: number = 0,  appRecord?: AppEntity
-  await Promise.all([
-    await handleAppDayData(extrinsicRecord, extrinsic, priceFeed, appRecord),
-    await handleAppHourData(extrinsicRecord, extrinsic, priceFeed, appRecord),
-    await handleAccount(extrinsicRecord, extrinsic, priceFeed, 1, appRecord),
-    await handleAccountDayData(
-      extrinsicRecord,
-      extrinsic,
-      priceFeed,
-      1,
-      appRecord
-    ),
-    await handleAccountHourData(
-      extrinsicRecord,
-      extrinsic,
-      priceFeed,
-      1,
-      appRecord
-    ),
-    await appRecord.save(),
-  ]);
 }
