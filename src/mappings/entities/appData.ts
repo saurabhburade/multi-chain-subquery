@@ -53,7 +53,7 @@ export async function handleApp(
         : "Unknown";
       appRecord = AppEntity.create({
         id: newAppId ? newAppId?.toString() : appId.toString(),
-        name: newAppName || appNameKey,
+        name: appNameKey,
         owner: newAppOwner ? newAppOwner : ext.signer.toString(),
         creationRawData: JSON.stringify(raw),
         createdAt: block.timestamp,
