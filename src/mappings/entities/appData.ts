@@ -48,7 +48,10 @@ export async function handleApp(
       newAppName = undefined,
       newAppOwner = undefined,
       newAppId = undefined,
-    ] = extraDetails!.events ? extraDetails!.events![0] : [];
+    ] =
+      extraDetails!.events && extraDetails!.events?.length > 0
+        ? extraDetails!.events![0]
+        : [];
     appRecord = AppEntity.create({
       id: newAppId ? newAppId?.toString() : appId.toString(),
       name: newAppName || appNameKey,
