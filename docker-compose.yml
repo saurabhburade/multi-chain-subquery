@@ -55,8 +55,8 @@ services:
       - ./:/app
     command:
       - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
-      - --multi-chain-dev
-      - --db-schema=multi-chain-dev
+      - --multi-chain
+      - --db-schema=multi-chain
       - -f=app/avail.yaml
       - --allow-schema-migration
       - --unfinalized-blocks=false
@@ -74,7 +74,7 @@ services:
   graphql-engine:
     image: subquerynetwork/subql-query:latest
     ports:
-      - 4000:4000
+      - 3000:3000
     restart: unless-stopped
     environment:
       DB_USER: postgres
@@ -83,5 +83,5 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
     command:
-      - --name=multi-chain-dev
+      - --name=multi-chain
       - --playground
