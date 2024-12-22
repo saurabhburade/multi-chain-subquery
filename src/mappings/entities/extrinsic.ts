@@ -96,18 +96,20 @@ export async function handleExtrinsics(
       if (!extIdToDetails[relatedExtrinsicIndex].events) {
         extIdToDetails[relatedExtrinsicIndex].events = [];
       }
-      extIdToDetails[relatedExtrinsicIndex].events!.push(
-        evt.event.data.toJSON()
-      );
+      if (evt.event.method === "createApplicationKey") {
+        extIdToDetails[relatedExtrinsicIndex].events!.push(evt.event.toJSON());
+        logger.info(`PUSH EVENT`);
+        logger.info(`PUSH EVENT`);
+        logger.info(`PUSH EVENT`);
+        logger.info(`PUSH EVENT ${JSON.stringify(evt.event)}`);
+        logger.info(`PUSH EVENT`);
+        logger.info(`PUSH EVENT`);
+        logger.info(`PUSH EVENT`);
+        logger.info(`PUSH EVENT`);
+      } else {
+        extIdToDetails[relatedExtrinsicIndex].events!.push([]);
+      }
 
-      logger.info(`PUSH EVENT`);
-      logger.info(`PUSH EVENT`);
-      logger.info(`PUSH EVENT`);
-      logger.info(`PUSH EVENT ${JSON.stringify(evt.event.data.toJSON())}`);
-      logger.info(`PUSH EVENT`);
-      logger.info(`PUSH EVENT`);
-      logger.info(`PUSH EVENT`);
-      logger.info(`PUSH EVENT`);
       if (key === "transactionPayment.TransactionFeePaid") {
         let fees = getFeesFromEvent(evt.event.data.toJSON() as any[]);
         extIdToDetails[relatedExtrinsicIndex].fee = (
