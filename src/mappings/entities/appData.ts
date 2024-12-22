@@ -36,9 +36,7 @@ export async function handleApp(
   const raw = extraDetails ? extraDetails.events : [];
   const appIdInspect = formattedInspect.find((x) => x.name === "appId");
   const nameInspect = formattedInspect.find((x) => x.name === "key");
-  const appNameKey = nameInspect
-    ? hexToUTF8((nameInspect.value as string).split(" ")[1])
-    : "Unknown";
+
   // const appName = formattedInspect.find((x) => x.name === "name");
   const appId = appIdInspect ? Number(appIdInspect.value) : -1;
 
@@ -50,6 +48,9 @@ export async function handleApp(
         extraDetails!.events && extraDetails!.events?.length > 0
           ? extraDetails!.events[0]
           : [];
+      const appNameKey = newAppName
+        ? hexToUTF8(newAppName as string)
+        : "Unknown";
       appRecord = AppEntity.create({
         id: newAppId ? newAppId?.toString() : appId.toString(),
         name: newAppName || appNameKey,
