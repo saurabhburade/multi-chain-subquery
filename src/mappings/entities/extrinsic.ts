@@ -96,19 +96,8 @@ export async function handleExtrinsics(
       if (!extIdToDetails[relatedExtrinsicIndex].events) {
         extIdToDetails[relatedExtrinsicIndex].events = [];
       }
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
-      if (evt.event.method === "createApplicationKey") {
+
+      if (evt.event.method === "ApplicationKeyCreated") {
         logger.info(`PUSH EVENT ${evt.event.method.toString()}`);
         extIdToDetails[relatedExtrinsicIndex].events!.push(
           evt.event.data.toJSON()
