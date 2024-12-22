@@ -13,19 +13,18 @@ export async function handleApp(
   const ext = extrinsic.extrinsic;
   const methodData = ext.method;
 
+  let dataSubmissionSize =
+    methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
+  const formattedInspect = formatInspect(ext.inspect());
+
+  const appIdInspect = formattedInspect.find((x) => x.name === "appId");
+  const nameInspect = formattedInspect.find((x) => x.name === "key");
+  const appNameKey = nameInspect
+    ? hexToUTF8((nameInspect.value as string).split(" ")[1])
+    : "Unknown";
+  // const appName = formattedInspect.find((x) => x.name === "name");
+  const appId = appIdInspect ? Number(appIdInspect.value) : 0;
   if (methodData.section === "dataAvailability") {
-    let dataSubmissionSize =
-      methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
-    const formattedInspect = formatInspect(ext.inspect());
-
-    const appIdInspect = formattedInspect.find((x) => x.name === "appId");
-    const nameInspect = formattedInspect.find((x) => x.name === "key");
-    const appNameKey = nameInspect
-      ? hexToUTF8((nameInspect.value as string).split(" ")[1])
-      : "Unknown";
-    // const appName = formattedInspect.find((x) => x.name === "name");
-    const appId = appIdInspect ? Number(appIdInspect.value) : 0;
-
     let appRecord = await AppEntity.get(appId.toString());
     // Handle new app
     if (appRecord === null || appRecord === undefined) {
