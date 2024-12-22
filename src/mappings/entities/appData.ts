@@ -20,7 +20,9 @@ export async function handleApp(
 
     const appIdInspect = formattedInspect.find((x) => x.name === "appId");
     const nameInspect = formattedInspect.find((x) => x.name === "key");
-    const appNameKey = nameInspect ? (nameInspect.value as string) : "Unknown";
+    const appNameKey = nameInspect
+      ? hexToUTF8((nameInspect.value as string).split(" ")[1])
+      : "Unknown";
     // const appName = formattedInspect.find((x) => x.name === "name");
     const appId = appIdInspect ? Number(appIdInspect.value) : 0;
 
