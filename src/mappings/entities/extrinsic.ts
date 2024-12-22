@@ -102,17 +102,7 @@ export async function handleExtrinsics(
         extIdToDetails[relatedExtrinsicIndex].events!.push(
           evt.event.data.toJSON() as any[]
         );
-        logger.info(`PUSH EVENT`);
-        logger.info(`PUSH EVENT`);
-        logger.info(`PUSH EVENT ${JSON.stringify(evt.event)}`);
-        logger.info(`PUSH EVENT`);
-        logger.info(`PUSH EVENT`);
-        logger.info(`PUSH EVENT`);
-        logger.info(`PUSH EVENT`);
-      } else {
-        // extIdToDetails[relatedExtrinsicIndex].events!.push({});
       }
-
       if (key === "transactionPayment.TransactionFeePaid") {
         let fees = getFeesFromEvent(evt.event.data.toJSON() as any[]);
         extIdToDetails[relatedExtrinsicIndex].fee = (
@@ -371,7 +361,6 @@ export function handleDataSubmission(
       signer: ext.signer.toString(),
       timestamp: block.timestamp,
       priceFeedId: priceFeed.id,
-      creationRawData: JSON.stringify(filteredRaw),
     });
 
     if (extraDetails?.feeRounded) {

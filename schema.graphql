@@ -281,7 +281,6 @@ type DataSubmission @entity {
   fees: Float
   feesPerMb: Float @index
   priceFeed: PriceFeedMinute
-  creationRawData: String
 }
 
 type CollectiveData @entity {
