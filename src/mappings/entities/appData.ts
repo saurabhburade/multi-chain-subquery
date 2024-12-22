@@ -21,7 +21,9 @@ export async function handleApp(
   let dataSubmissionSize =
     methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
   const formattedInspect = formatInspect(ext.inspect());
-
+  const filteredRaw = formattedInspect.map((x) => {
+    return { ...x, data: "" };
+  });
   const appIdInspect = formattedInspect.find((x) => x.name === "appId");
   const nameInspect = formattedInspect.find((x) => x.name === "key");
   const appNameKey = nameInspect
@@ -36,6 +38,7 @@ export async function handleApp(
       id: appId.toString(),
       name: appNameKey,
       owner: ext.signer.toString(),
+      creationRawData: JSON.stringify(filteredRaw),
       createdAt: block.timestamp,
       timestampCreation: extrinsicRecord.timestamp,
       timestampLast: extrinsicRecord.timestamp,

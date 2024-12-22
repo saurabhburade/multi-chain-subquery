@@ -199,6 +199,7 @@ type AppEntity @entity {
   id: ID!
   createdAt: Date!
   updatedAt: Date!
+  creationRawData: String
   timestampCreation: Date! @index
   owner: String! @index
   totalByteSize: Int! @index
@@ -280,6 +281,7 @@ type DataSubmission @entity {
   fees: Float
   feesPerMb: Float @index
   priceFeed: PriceFeedMinute
+  creationRawData: String
 }
 
 type CollectiveData @entity {
