@@ -44,26 +44,27 @@ export async function handleApp(
 
   // const appName = formattedInspect.find((x) => x.name === "name");
   const appId = appIdInspect ? Number(appIdInspect.value) : -1;
-  // @ts-ignore
-  const entries = await api.query.dataAvailability.appKeys.entries();
 
-  const data: ApplicationData[] = entries.map(([key, value]) => {
-    const name = key.args[0].toHuman() as string;
-    const appKey = value.toHuman() as {
-      owner: string;
-      id: string | number;
-    };
-    return {
-      name,
-      owner: appKey.owner,
-      id: Number(appKey.id),
-    };
-  });
-
-  // @ts-ignore
-  const appEentry = data?.find((app) => app.id === appId);
-  console.log("appKeys");
   if (methodData.section === "dataAvailability") {
+    // @ts-ignore
+    const entries = await api.query.dataAvailability.appKeys.entries();
+
+    const data: ApplicationData[] = entries.map(([key, value]: any) => {
+      const name = key.args[0].toHuman() as string;
+      const appKey = value.toHuman() as {
+        owner: string;
+        id: string | number;
+      };
+      return {
+        name,
+        owner: appKey.owner,
+        id: Number(appKey.id),
+      };
+    });
+
+    // @ts-ignore
+    const appEentry = data?.find((app) => app.id === appId);
+    logger.info(`appKey::: ${JSON.stringify(appEentry)}`);
     let appRecord = await AppEntity.get(appId.toString());
     // Handle new app
     if (appRecord === null || appRecord === undefined) {
