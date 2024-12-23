@@ -192,6 +192,7 @@ type AccountEntity @entity {
   avgAvailPrice: Float
   avgEthPrice: Float
   accountDayData: [AccountDayData] @derivedFrom(field: "account")
+  accountHourData: [AccountHourData] @derivedFrom(field: "account")
   startBlock: Float
   endBlock: Float
 }

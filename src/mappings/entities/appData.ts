@@ -9,6 +9,11 @@ import { handleAppDayData } from "../intervals/day/handleAppDayData";
 import { handleAppHourData } from "../intervals/hour/handleAppHourData";
 import { handleAccountHourData } from "../intervals/hour/handleHourData";
 
+export interface ApplicationData {
+  name: string;
+  id: number;
+  owner: string;
+}
 export async function handleApp(
   extrinsicRecord: Extrinsic,
   extrinsic: Omit<SubstrateExtrinsic, "events" | "success">,
@@ -39,7 +44,25 @@ export async function handleApp(
 
   // const appName = formattedInspect.find((x) => x.name === "name");
   const appId = appIdInspect ? Number(appIdInspect.value) : -1;
+  // @ts-ignore
+  const entries = await api.query.dataAvailability.appKeys.entries();
 
+  const data: ApplicationData[] = entries.map(([key, value]) => {
+    const name = key.args[0].toHuman() as string;
+    const appKey = value.toHuman() as {
+      owner: string;
+      id: string | number;
+    };
+    return {
+      name,
+      owner: appKey.owner,
+      id: Number(appKey.id),
+    };
+  });
+
+  // @ts-ignore
+  const appEentry = data?.find((app) => app.id === appId);
+  console.log("appKeys");
   if (methodData.section === "dataAvailability") {
     let appRecord = await AppEntity.get(appId.toString());
     // Handle new app
@@ -55,7 +78,7 @@ export async function handleApp(
         id: newAppId ? newAppId?.toString() : appId.toString(),
         name: appNameKey,
         owner: newAppOwner ? newAppOwner : ext.signer.toString(),
-        creationRawData: JSON.stringify(raw),
+        creationRawData: JSON.stringify({ ...raw, appEentry }),
         createdAt: block.timestamp,
         timestampCreation: extrinsicRecord.timestamp,
         timestampLast: extrinsicRecord.timestamp,
