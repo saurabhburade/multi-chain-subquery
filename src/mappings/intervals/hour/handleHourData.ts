@@ -109,9 +109,7 @@ export async function handleAccountHourData(
   const methodData = ext.method;
   let dataSubmissionSize =
     methodData.args.length > 0 ? methodData.args[0].toString().length / 2 : 0;
-  let accountHourDataRecord = await AccountHourData.get(
-    `${extrinsicRecord.signer.toString()}-hourId-${hourId}`
-  );
+  let accountHourDataRecord = await AccountHourData.get(id);
   const oneMbInBytes = 1_048_576;
   const feesPerMb =
     (extrinsicRecord.feesRounded! / dataSubmissionSize) * oneMbInBytes;
