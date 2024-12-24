@@ -172,6 +172,8 @@ type AccountEntity @entity {
   amountRounded: Float @index
   amountFrozenRounded: Float @index
   amountTotalRounded: Float @index
+  balanceReserved: Float @index
+  balanceFree: Float @index
   createdAt: Date!
   updatedAt: Date!
   timestampCreation: Date! @index
@@ -353,6 +355,14 @@ type AccountDayData @entity {
   avgEthPrice: Float
   prevDayData: AccountDayData
   account: AccountEntity! @index
+  amount: String
+  amountFrozen: String
+  amountTotal: String
+  amountRounded: Float @index
+  amountFrozenRounded: Float @index
+  amountTotalRounded: Float @index
+  balanceReserved: Float @index
+  balanceFree: Float @index
 }
 type AccountHourData @entity {
   id: ID!
@@ -380,6 +390,14 @@ type AccountHourData @entity {
   avgEthPrice: Float
   prevHourData: AccountHourData
   account: AccountEntity! @index
+  amount: String
+  amountFrozen: String
+  amountTotal: String
+  amountRounded: Float @index
+  amountFrozenRounded: Float @index
+  amountTotalRounded: Float @index
+  balanceReserved: Float @index
+  balanceFree: Float @index
 }
 
 type CollectiveHourData @entity {

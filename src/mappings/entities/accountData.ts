@@ -10,6 +10,7 @@ import {
 import { CorrectSubstrateBlock } from "../mappingHandlers";
 import { handleAccountDayData } from "../intervals/day/handleDayData";
 import { handleAccountHourData } from "../intervals/hour/handleHourData";
+import { roundPrice } from "../../utils";
 
 export async function handleAccount(
   extrinsicRecord: Extrinsic,
@@ -48,6 +49,8 @@ export async function handleAccount(
         amountRounded: 0,
         amountTotal: "0",
         amountTotalRounded: 0,
+        balanceReserved: 0,
+        balanceFree: 0,
         avgAvailPrice: extrinsicRecord.availPrice,
         avgEthPrice: extrinsicRecord.ethPrice,
         totalDAFees: 0,
@@ -66,6 +69,44 @@ export async function handleAccount(
         type,
       });
     }
+    //  {"nonce":3014,"consumers":0,"providers":1,"sufficients":0,"data":{"free":"0x0000000000001f3f5392a7503702c202","reserved":0,"frozen":0,"flags":"0x80000000000000000000000000000000"}}
+    // @ts-ignore
+    const { data: balance } = (await // @ts-ignore
+    (api as any).query.system.account()) as any;
+    const { feeFrozen, free, miscFrozen, reserved, frozen } = balance;
+
+    let balanceFrozen: bigint | undefined = undefined;
+    if (frozen) {
+      balanceFrozen = frozen.toBigInt();
+    } else {
+      if (miscFrozen && feeFrozen) {
+        const balanceFrozenMisc = miscFrozen.toBigInt();
+        const balanceFrozenFee = feeFrozen.toBigInt();
+        balanceFrozen =
+          balanceFrozenFee > balanceFrozenMisc
+            ? balanceFrozenFee
+            : balanceFrozenMisc;
+      } else if (miscFrozen) {
+        balanceFrozen = miscFrozen.toBigInt();
+      } else if (feeFrozen) {
+        balanceFrozen = feeFrozen.toBigInt();
+      }
+    }
+    const balanceReserved = reserved.toBigInt();
+    const balanceFree = free.toBigInt();
+    const amountFrozen = balanceFrozen ? balanceFrozen.toString() : "0";
+    const amountTotal = (balanceFree + balanceReserved).toString();
+    const amount = balanceFrozen
+      ? (balanceFree - balanceFrozen).toString()
+      : balanceFree.toString();
+    accountEntity.amount = amount;
+    accountEntity.amountFrozen = amountFrozen;
+    accountEntity.amountTotal = amountTotal;
+    accountEntity.amountRounded = roundPrice(accountEntity.amount!);
+    accountEntity.amountFrozenRounded = roundPrice(accountEntity.amountFrozen);
+    accountEntity.amountTotalRounded = roundPrice(accountEntity.amountTotal!);
+    accountEntity.balanceFree = balanceFree;
+    accountEntity.balanceReserved = balanceReserved;
     accountEntity.timestampLast = extrinsicRecord.timestamp;
 
     accountEntity.updatedAt = extrinsicRecord.timestamp;
