@@ -99,6 +99,7 @@ export async function handleApp(
         lastPriceFeedId: priceFeed.id,
         endBlock: 0,
         startBlock: block.block.header.number.toNumber(),
+        creationExtId: extrinsicRecord.id,
       });
     }
     appRecord.timestampLast = extrinsicRecord.timestamp;

@@ -357,11 +357,12 @@ export function handleDataSubmission(
       id: idx,
       appId,
       byteSize: dataSubmissionSize,
-      extrinsicId: idx,
+      extrinsicIdAttched: idx,
       signer: ext.signer.toString(),
       timestamp: block.timestamp,
       priceFeedId: priceFeed.id,
       feesUSD: 0,
+      extrinsicId: ext.hash.toString(),
     });
 
     if (extraDetails?.feeRounded) {

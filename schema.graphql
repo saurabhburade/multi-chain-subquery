@@ -203,6 +203,7 @@ type AppEntity @entity {
   createdAt: Date!
   updatedAt: Date!
   creationRawData: String
+  creationExt: Extrinsic
   timestampCreation: Date! @index
   owner: String! @index
   totalByteSize: Int! @index
@@ -276,7 +277,7 @@ type AppHourData @entity {
 
 type DataSubmission @entity {
   id: ID!
-  extrinsicId: String!
+  extrinsicIdAttched: String!
   timestamp: Date! @index
   byteSize: Int! @index
   appId: Int! @index
@@ -285,6 +286,7 @@ type DataSubmission @entity {
   feesUSD: Float
   feesPerMb: Float @index
   priceFeed: PriceFeedMinute
+  extrinsic: Extrinsic
 }
 
 type CollectiveData @entity {
