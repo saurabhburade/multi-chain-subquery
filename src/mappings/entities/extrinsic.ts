@@ -265,23 +265,23 @@ export function handleCall(
     const ext = extrinsic.extrinsic;
     const methodData = ext.method;
     const key = `${methodData.section}_${methodData.method}`;
-    // const argsValue =
-    //   key === "dataAvailability_submitData"
-    //     ? // We handle the block differently
-    //       methodData.args.map((a, i) =>
-    //         i === 0 ? handleDaSubmissionData(a) : a.toString()
-    //       )
-    //     : key === "vector_execute"
-    //     ? // We handle the parameter of index 1 of vector execute differently
-    //       methodData.args.map((a, i) =>
-    //         i === 1 ? handleVectorExecuteMessage(a) : a.toString()
-    //       )
-    //     : key === "vector_sendMessage"
-    //     ? // We handle the parameter of index 0 of vector send message differently
-    //       methodData.args.map((a, i) =>
-    //         i === 0 ? handleVectorSendMessage(a) : a.toString()
-    //       )
-    //     : methodData.args.map((a) => a.toString());
+    const argsValue =
+      key === "dataAvailability_submitData"
+        ? // We handle the block differently
+          methodData.args.map((a, i) =>
+            i === 0 ? handleDaSubmissionData(a) : a.toString()
+          )
+        : key === "vector_execute"
+        ? // We handle the parameter of index 1 of vector execute differently
+          methodData.args.map((a, i) =>
+            i === 1 ? handleVectorExecuteMessage(a) : a.toString()
+          )
+        : key === "vector_sendMessage"
+        ? // We handle the parameter of index 0 of vector send message differently
+          methodData.args.map((a, i) =>
+            i === 0 ? handleVectorSendMessage(a) : a.toString()
+          )
+        : methodData.args.map((a) => a.toString());
 
     const extrinsicRecord = Extrinsic.create({
       id: ext.hash.toString(), // txHash - Transaction hash
@@ -299,7 +299,7 @@ export function handleCall(
       signature: ext.signature.toString(), // signature - The signature of the extrinsic
       nonce: ext.nonce.toNumber(), // nonce - The nonce of the extrinsic
       argsName: methodData.meta.args.map((a) => a.name.toString()), // argsName - List of argument names in the extrinsic method
-      argsValue: [], // argsValue - List of argument values passed to the extrinsic
+      argsValue: argsValue, // argsValue - List of argument values passed to the extrinsic
       nbEvents: extraDetails?.nbEvents || 0, // nbEvents - The number of events related to the extrinsic
       ethPrice: priceFeed.ethPrice, // ethPrice - Current Ethereum price (or some other token's price)
       availPrice: priceFeed.availPrice, // availPrice - Availability price (if applicable)
