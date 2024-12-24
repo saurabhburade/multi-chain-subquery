@@ -154,10 +154,8 @@ export async function handleAccountDayData(
 
   //  {"nonce":3014,"consumers":0,"providers":1,"sufficients":0,"data":{"free":"0x0000000000001f3f5392a7503702c202","reserved":0,"frozen":0,"flags":"0x80000000000000000000000000000000"}}
   // @ts-ignore
-  const { data: balance } = await(
-    // @ts-ignore
-    api as any
-  ).query.system.account(extrinsicRecord.signer.toString()) as any;
+  const { data: balance } = (await // @ts-ignore
+  (api as any).query.system.account(extrinsicRecord.signer.toString())) as any;
   const { feeFrozen, free, miscFrozen, reserved, frozen } = balance;
 
   let balanceFrozen: bigint | undefined = undefined;
@@ -194,8 +192,9 @@ export async function handleAccountDayData(
   accountDayDataRecord.amountTotalRounded = roundPrice(
     accountDayDataRecord.amountTotal!
   );
-  accountDayDataRecord.balanceFree = balanceFree;
-  accountDayDataRecord.balanceReserved = balanceReserved;
+
+  accountDayDataRecord.balanceFree = Number(balanceFree);
+  accountDayDataRecord.balanceReserved = Number(balanceReserved);
   accountDayDataRecord.timestampLast = extrinsicRecord.timestamp;
 
   accountDayDataRecord.avgAvailPrice =
