@@ -169,11 +169,11 @@ type AccountEntity @entity {
   amount: String
   amountFrozen: String
   amountTotal: String
-  amountRounded: Float @index
-  amountFrozenRounded: Float @index
-  amountTotalRounded: Float @index
-  balanceReserved: Float @index
-  balanceFree: Float @index
+  amountRounded: Float
+  amountFrozenRounded: Float
+  amountTotalRounded: Float
+  balanceReserved: Float
+  balanceFree: Float 
   createdAt: Date!
   updatedAt: Date!
   timestampCreation: Date! @index
@@ -358,11 +358,11 @@ type AccountDayData @entity {
   amount: String
   amountFrozen: String
   amountTotal: String
-  amountRounded: Float @index
-  amountFrozenRounded: Float @index
-  amountTotalRounded: Float @index
-  balanceReserved: Float @index
-  balanceFree: Float @index
+  amountRounded: Float 
+  amountFrozenRounded: Float 
+  amountTotalRounded: Float 
+  balanceReserved: Float 
+  balanceFree: Float
 }
 type AccountHourData @entity {
   id: ID!
@@ -393,11 +393,11 @@ type AccountHourData @entity {
   amount: String
   amountFrozen: String
   amountTotal: String
-  amountRounded: Float @index
-  amountFrozenRounded: Float @index
-  amountTotalRounded: Float @index
-  balanceReserved: Float @index
-  balanceFree: Float @index
+  amountRounded: Float 
+  amountFrozenRounded: Float 
+  amountTotalRounded: Float 
+  balanceReserved: Float 
+  balanceFree: Float
 }
 
 type CollectiveHourData @entity {
