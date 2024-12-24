@@ -361,6 +361,7 @@ export function handleDataSubmission(
       signer: ext.signer.toString(),
       timestamp: block.timestamp,
       priceFeedId: priceFeed.id,
+      feesUSD: 0,
     });
 
     if (extraDetails?.feeRounded) {
@@ -369,6 +370,8 @@ export function handleDataSubmission(
       const feesPerMb =
         (extraDetails.feeRounded / dataSubmissionSize) * oneMbInBytes;
       dataSubmissionRecord.feesPerMb = feesPerMb;
+      dataSubmissionRecord.feesUSD =
+        extraDetails.feeRounded * priceFeed.availPrice;
     }
 
     // dataSubmissionRecord.save();

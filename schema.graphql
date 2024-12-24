@@ -173,7 +173,7 @@ type AccountEntity @entity {
   amountFrozenRounded: Float
   amountTotalRounded: Float
   balanceReserved: Float
-  balanceFree: Float 
+  balanceFree: Float
   createdAt: Date!
   updatedAt: Date!
   timestampCreation: Date! @index
@@ -282,6 +282,7 @@ type DataSubmission @entity {
   appId: Int! @index
   signer: String! @index
   fees: Float
+  feesUSD: Float
   feesPerMb: Float @index
   priceFeed: PriceFeedMinute
 }
@@ -358,10 +359,10 @@ type AccountDayData @entity {
   amount: String
   amountFrozen: String
   amountTotal: String
-  amountRounded: Float 
-  amountFrozenRounded: Float 
-  amountTotalRounded: Float 
-  balanceReserved: Float 
+  amountRounded: Float
+  amountFrozenRounded: Float
+  amountTotalRounded: Float
+  balanceReserved: Float
   balanceFree: Float
 }
 type AccountHourData @entity {
@@ -393,10 +394,10 @@ type AccountHourData @entity {
   amount: String
   amountFrozen: String
   amountTotal: String
-  amountRounded: Float 
-  amountFrozenRounded: Float 
-  amountTotalRounded: Float 
-  balanceReserved: Float 
+  amountRounded: Float
+  amountFrozenRounded: Float
+  amountTotalRounded: Float
+  balanceReserved: Float
   balanceFree: Float
 }
 
